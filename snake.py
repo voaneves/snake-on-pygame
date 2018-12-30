@@ -418,7 +418,7 @@ class Game:
         pygame.display.set_caption("SNAKE GAME  | PLAY NOW!")
 
         img = pygame.image.load(resource_path("resources/images" +
-                                              "/snake_logo.png")).convert()
+                                              "/ingame_snake_logo.png")).convert()
         img = pygame.transform.scale(img, (VAR.canvas_size,
                                            int(VAR.canvas_size / 3)))
         img_rect = img.get_rect()
