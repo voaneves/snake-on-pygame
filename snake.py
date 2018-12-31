@@ -821,7 +821,7 @@ class Game:
         self.draw(color_list)
 
         pygame.display.update()
-        self.fps.tick(GAME_FPS)  # Limit FPS to 100
+        self.fps.tick(60)  # Limit FPS to 100
 
     def get_name(self):
         """See test.py in my desktop, for a textbox input in pygame"""
