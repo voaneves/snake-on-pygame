@@ -149,10 +149,10 @@ class TextBlock:
         color: tuple of 3 * int
             The color that will be rendered for the text block.
         """
-        color = pygame.Color(42, 42, 42)
+        color = pygame.Color(VAR.head_color)
 
         if self.block_type == "menu" and not self.hovered:
-                color = pygame.Color(152, 152, 152)
+            color = pygame.Color(self.tail_color)
 
         return color
 
@@ -575,7 +575,8 @@ class Game:
         # The main loop, it pump key_presses and update the board every tick.
         previous_size = self.snake.length # Initial size of the snake
         current_size = previous_size # Initial size
-        color_list = self.gradient([(42, 42, 42), (152, 152, 152)],
+        color_list = self.gradient([(VAR.head_color),
+                                    (VAR.tail_color)],
                                    previous_size)
 
         # Main loop, where snakes moves after elapsed time is bigger than the
@@ -603,7 +604,8 @@ class Game:
                 current_size = self.snake.length  # Update the body size
 
                 if current_size > previous_size:
-                    color_list = self.gradient([(42, 42, 42), (152, 152, 152)],
+                    color_list = self.gradient([(VAR.head_color),
+                                                (VAR.tail_color)],
                                                current_size)
 
                     previous_size = current_size
@@ -807,6 +809,17 @@ class Game:
 
         pygame.display.set_caption("SNAKE GAME  |  Score: "
                                    + str(self.snake.length - 3))
+
+    def render(self):
+        size = self.snake.length # Size of the snake
+
+        color_list = self.gradient([VAR.head_color,
+                                    VAR.tail_color],
+                                   size)
+        self.draw(color_list)
+
+        pygame.display.update()
+        self.fps.tick(GAME_FPS)  # Limit FPS to 100
 
     def get_name(self):
         """See test.py in my desktop, for a textbox input in pygame"""
