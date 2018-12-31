@@ -811,8 +811,10 @@ class Game:
                                    + str(self.snake.length - 3))
 
     def render(self):
-        size = self.snake.length # Size of the snake
+        if not hasattr(self, 'window'):
+            self.create_window()
 
+        size = self.snake.length # Size of the snake
         color_list = self.gradient([VAR.head_color,
                                     VAR.tail_color],
                                    size)
