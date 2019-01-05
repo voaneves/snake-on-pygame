@@ -87,36 +87,30 @@ file (WIP) or open an issue with your score.
 
 ## 2. Getting Started (using AI agents) <a name="getting-started-ai"></a>
 
-You can play with or train AI agents, which will choose the best action according
-to given policies. The currently implemented algorithms are:
+This game uses similar usage structure and methods to [OpenAI's gym](https://github.com/openai/gym) and you
+can easily integrate it with any agent, written in Pytorch, Tensorflow, Theano or Keras.
 
-* DQN:
-    * Deep Q-Network (DQN) (with ExperienceReplay) [1]
-        Paper: https://arxiv.org/abs/1312.5602
-    * Double DQN [2]
-        Paper: https://arxiv.org/abs/1509.06461
-    * Dueling DQN [3]
-        Paper: https://arxiv.org/abs/1511.06581
-    * Prioritized Experience Replay (PER) [4]
-        Paper: https://arxiv.org/abs/1511.05952
-    * Multi-step returns [5]
-        Paper: https://arxiv.org/pdf/1703.01327
+It's recommended that you use [colab-rl](https://github.com/Neves4/colab-rl), a repository that integrates
+state-of-the-art algorithms with games, because it already implements the agents
+and the game, making the process of quick prototyping much easier.
 
-* ACER:
-    * WIP [6]
-        Paper: https://arxiv.org/abs/1611.01224
+### 2.1. Available methods to integrate with any agent <a name="available-methods"></a>
 
-### 2.1. Prerequisites <a name="pre-req-ai"></a>
+#### 2.1.1. Training <a name="training-on-colab-rl"></a>
 
-### 2.2. Installing <a name="installing-ai"></a>
+#### 2.1.2. Training <a name="training-on-colab-rl"></a>
 
-### 2.3. Training <a name="training-ai"></a>
+#### 2.1.3. Training <a name="training-on-colab-rl"></a>
 
-### 2.4. Testing <a name="testing-ai"></a>
+### 2.2. Using colab-rl <a name="using-colab-rl"></a>
+
+#### 2.2.1. Training <a name="training-on-colab-rl"></a>
+
+#### 2.2.2. Testing <a name="testing-on-colab-rl"></a>
 
 ## 3. Contributing <a name="contributing"></a>
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on this repo's code of conduct, and the process for submitting pull requests.
 
 ## 4. License <a name="license"></a>
 
@@ -124,9 +118,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 5. Acknowledgments <a name="acknowledgments"></a>
 
-* @farizrahman4u - For his [qlearning4k](https://github.com/farizrahman4u/qlearning4k) code;
-* @chuyangliu - For being supportive with my questions;
-* @Kaixhin - For his implementations of state-of-the-art RL models;
-* @qfettes for his awesome repo [DeepRL-Tutorials](https://github.com/qfettes/DeepRL-Tutorials).
-* @simoninithomas - awesome articles and implementations on his [repo](https://github.com/simoninithomas/Deep_reinforcement_learning_Course)
-* A lot of other people that helped me entering in this journey :)
+* @farizrahman4u - For his [qlearning4k](https://github.com/farizrahman4u/qlearning4k) snake code, I used it as the base of this repo's code.
