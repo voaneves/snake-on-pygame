@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""SnakeGame: A simple and fun exploration, meant to be used by Human and AI.
+"""snake: A simple and fun exploration game, meant to be used by Human and AI.
 """
 
 import sys  # To close the window when the game is over
@@ -14,9 +14,10 @@ from itertools import tee  # For the color gradient on snake
 import pygame  # This is the engine used in the game
 import numpy as np # Used in calculations and math
 
+from utilities.text_block import TextBlock # Textblocks for pygame
+
 __author__ = "Victor Neves"
 __license__ = "MIT"
-__version__ = "1.0"
 __maintainer__ = "Victor Neves"
 __email__ = "victorneves478@gmail.com"
 __status__ = "Production"
@@ -101,81 +102,6 @@ class GlobalVariables:
     def canvas_size(self):
         """Canvas size is updated with board_size and block_size."""
         return self.board_size * self.block_size
-
-class TextBlock:
-    """Block of text class, used by pygame. Can be used to both text and menu.
-
-    Attributes:
-    ----------
-    text: string
-        The text to be displayed.
-    pos: tuple of 2 * int
-        Color of the tail. End of the body color gradient.
-    screen: pygame window object
-        The screen where the text is drawn.
-    scale: int, optional, default = 1 / 12
-        Adaptive scale to resize if the board size changes.
-    type: string, optional, default = "text"
-        Assert whether the BlockText is a text or menu option.
-    """
-    def __init__(self, text, pos, screen, scale = (1 / 12), block_type = "text"):
-        """Initialize, set position of the rectangle and render the text block."""
-        self.block_type = block_type
-        self.hovered = False
-        self.text = text
-        self.pos = pos
-        self.screen = screen
-        self.scale = scale
-        self.set_rect()
-        self.draw()
-
-    def draw(self):
-        """Set what to render and blit on the pygame screen."""
-        self.set_rend()
-        self.screen.blit(self.rend, self.rect)
-
-    def set_rend(self):
-        """Set what to render (font, colors, sizes)"""
-        font = pygame.font.Font(resource_path("resources/fonts/freesansbold.ttf"),
-                                int((VAR.canvas_size) * self.scale))
-        self.rend = font.render(self.text, True, self.get_color(),
-                                self.get_background())
-
-    def get_color(self):
-        """Get color to render for text and menu (hovered or not).
-
-        Return
-        ----------
-        color: tuple of 3 * int
-            The color that will be rendered for the text block.
-        """
-        color = pygame.Color(VAR.head_color)
-
-        if self.block_type == "menu" and not self.hovered:
-            color = pygame.Color(self.tail_color)
-
-        return color
-
-    def get_background(self):
-        """Get background color to render for text (hovered or not) and menu.
-
-        Return
-        ----------
-        color: tuple of 3 * int
-            The color that will be rendered for the background of the text block.
-        """
-        color = None
-
-        if self.block_type == "menu" and self.hovered:
-            color = pygame.Color(152, 152, 152)
-
-        return color
-
-    def set_rect(self):
-        """Set the rectangle and it's position to draw on the screen."""
-        self.set_rend()
-        self.rect = self.rend.get_rect()
-        self.rect.center = self.pos
 
 
 class Snake:
@@ -336,10 +262,13 @@ class Game:
             else:
                 self.nb_actions = 5
 
+            self.action_space = self.nb_actions
+            self.observation_space = np.empty(shape = (board_size ** 2,))
+
             self.reset()
 
-        self.action_space = self.nb_actions
-        self.observation_space = np.empty(shape = (board_size ** 2,))
+        self.font_path = self.resource_path("resources/fonts/product_sans_bold.ttf")
+        self.logo_path = self.resource_path("resources/images/ingame_snake_logo.png")
 
     def reset(self):
         """Reset the game environment."""
@@ -356,7 +285,8 @@ class Game:
         """Create a pygame display with board_size * block_size dimension."""
         pygame.init()
         flags = pygame.DOUBLEBUF | pygame.HWSURFACE
-        self.window = pygame.display.set_mode((VAR.canvas_size, VAR.canvas_size),
+        self.window = pygame.display.set_mode((VAR.canvas_size,
+                                               VAR.canvas_size),
                                               flags)
         self.window.set_alpha(None)
 
@@ -417,29 +347,44 @@ class Game:
         """
         pygame.display.set_caption("SNAKE GAME  | PLAY NOW!")
 
-        img = pygame.image.load(resource_path("resources/images" +
-                                              "/ingame_snake_logo.png")).convert()
+        img = pygame.image.load(self.logo_path).convert()
         img = pygame.transform.scale(img, (VAR.canvas_size,
                                            int(VAR.canvas_size / 3)))
         img_rect = img.get_rect()
         img_rect.center = self.screen_rect.center
         list_menu = ['PLAY', 'BENCHMARK', 'LEADERBOARDS', 'QUIT']
-        menu_options = [TextBlock(' PLAY GAME ',
-                                  (self.screen_rect.centerx,
-                                   4 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 12), "menu"),
-                        TextBlock(' BENCHMARK ',
-                                  (self.screen_rect.centerx,
-                                   6 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 12), "menu"),
-                        TextBlock(' LEADERBOARDS ',
-                                  (self.screen_rect.centerx,
-                                   8 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 12), "menu"),
-                        TextBlock(' QUIT ',
-                                  (self.screen_rect.centerx,
-                                   10 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 12), "menu")]
+        menu_options = [TextBlock(text = ' PLAY GAME ',
+                                  pos = (self.screen_rect.centerx,
+                                         4 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 12),
+                                  block_type = "menu"),
+                        TextBlock(text = ' BENCHMARK ',
+                                  pos = (self.screen_rect.centerx,
+                                         6 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 12),
+                                  block_type = "menu"),
+                        TextBlock(text = ' LEADERBOARDS ',
+                                  pos = (self.screen_rect.centerx,
+                                         8 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 12),
+                                  block_type = "menu"),
+                        TextBlock(text = ' QUIT ',
+                                  pos = (self.screen_rect.centerx,
+                                         10 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 12),
+                                  block_type = "menu")]
         selected_option = self.cycle_menu(menu_options, list_menu, OPTIONS,
                                           img, img_rect)
 
@@ -452,13 +397,22 @@ class Game:
             self.window.fill(pygame.Color(225, 225, 225))
 
             # Game starts in 3, 2, 1
-            text = [TextBlock('Game starts in',
-                              (self.screen_rect.centerx,
-                               4 * self.screen_rect.centery / 10),
-                              self.window, (1 / 10), "text"),
-                    TextBlock(time, (self.screen_rect.centerx,
+            text = [TextBlock(text = 'Game starts in',
+                              pos = (self.screen_rect.centerx,
+                                     4 * self.screen_rect.centery / 10),
+                              canvas_size = VAR.canvas_size,
+                              font_path = self.font_path,
+                              window = self.window,
+                              scale = (1 / 12),
+                              block_type = "text"),
+                    TextBlock(text = time,
+                              pos = (self.screen_rect.centerx,
                                      12 * self.screen_rect.centery / 10),
-                              self.window, (1 / 1.5), "text")]
+                              canvas_size = VAR.canvas_size,
+                              font_path = self.font_path,
+                              window = self.window,
+                              scale = (1 / 1.5),
+                              block_type = "text")]
 
             for text_block in text:
                 text_block.draw()
@@ -507,26 +461,51 @@ class Game:
         score_option = None
 
         if len(score) == VAR.benchmark:
-            score_option = TextBlock(' ADD TO LEADERBOARDS ',
-                                     (self.screen_rect.centerx,
-                                      8 * self.screen_rect.centery / 10),
-                                     self.window, (1 / 15), "menu")
+            score_option = TextBlock(text = ' ADD TO LEADERBOARDS ',
+                                     pos = (self.screen_rect.centerx,
+                                            8 * self.screen_rect.centery / 10),
+                                     canvas_size = VAR.canvas_size,
+                                     font_path = self.font_path,
+                                     window = self.window,
+                                     scale = (1 / 15),
+                                     block_type = "menu")
 
         text_score = 'SCORE: ' + str(int(np.mean(score)))
         list_menu = ['PLAY', 'MENU', 'ADD_TO_LEADERBOARDS', 'QUIT']
-        menu_options = [TextBlock(' PLAY AGAIN ', (self.screen_rect.centerx,
-                                                   4 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 15), "menu"),
-                        TextBlock(' GO TO MENU ', (self.screen_rect.centerx,
-                                                   6 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 15), "menu"),
+        menu_options = [TextBlock(text = ' PLAY AGAIN ',
+                                  pos = (self.screen_rect.centerx,
+                                         4 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 15),
+                                  block_type = "menu"),
+
+                        TextBlock(text = ' GO TO MENU ',
+                                  pos = (self.screen_rect.centerx,
+                                         6 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 15),
+                                  block_type = "menu"),
                         score_option,
-                        TextBlock(' QUIT ', (self.screen_rect.centerx,
-                                             10 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 15), "menu"),
-                        TextBlock(text_score, (self.screen_rect.centerx,
-                                               15 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 10), "text")]
+                        TextBlock(text = ' QUIT ',
+                                  pos = (self.screen_rect.centerx,
+                                         10 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 15),
+                                  block_type = "menu"),
+                        TextBlock(text = text_score,
+                                  pos = (self.screen_rect.centerx,
+                                         15 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 10),
+                                  block_type = "text")]
         pygame.display.set_caption("SNAKE GAME  | " + text_score
                                    + "  |  GAME OVER...")
         LOGGER.info('EVENT: GAME OVER | FINAL %s', text_score)
@@ -543,18 +522,14 @@ class Game:
             The selected speed in the main loop.
         """
         list_menu = ['EASY', 'MEDIUM', 'HARD', 'MEGA_HARDCORE']
-        menu_options = [TextBlock(LEVELS[0], (self.screen_rect.centerx,
-                                              4 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 10), "menu"),
-                        TextBlock(LEVELS[1], (self.screen_rect.centerx,
-                                              8 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 10), "menu"),
-                        TextBlock(LEVELS[2], (self.screen_rect.centerx,
-                                              12 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 10), "menu"),
-                        TextBlock(LEVELS[3], (self.screen_rect.centerx,
-                                              16 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 10), "menu")]
+        menu_options = [TextBlock(text = LEVELS[i],
+                                  pos = (self.screen_rect.centerx,
+                                         4 * (i + 1) * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 10),
+                                  block_type = "menu") for i in range(len(list_menu))]
 
         speed = self.cycle_menu(menu_options, list_menu, SPEEDS)
         mega_hardcore = False
@@ -840,10 +815,14 @@ class Game:
 
     def view_leaderboards(self):
         list_menu = ['MENU']
-        menu_options = [TextBlock('LEADERBOARDS',
-                                  (self.screen_rect.centerx,
-                                   2 * self.screen_rect.centery / 10),
-                                  self.window, (1 / 12), "text")]
+        menu_options = [TextBlock(text = 'LEADERBOARDS',
+                                  pos = (self.screen_rect.centerx,
+                                         2 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 12),
+                                  block_type = "text")]
 
         file_path = resource_path("resources/scores.json")
 
@@ -858,17 +837,19 @@ class Game:
 #                                10 * self.screen_rect.centery / 10),
 #                                self.window, (1 / 12), "text"))
 
-        menu_options.append(TextBlock('MENU',
-                            (self.screen_rect.centerx,
-                            10 * self.screen_rect.centery / 10),
-                            self.window, (1 / 12), "menu"))
+        menu_options.append(TextBlock(text = 'MENU',
+                                      pos = (self.screen_rect.centerx,
+                                             10 * self.screen_rect.centery / 10),
+                                      canvas_size = VAR.canvas_size,
+                                      font_path = self.font_path,
+                                      window = self.window,
+                                      scale = (1 / 12),
+                                      block_type = "menu"))
         selected_option = self.cycle_menu(menu_options, list_menu, OPTIONS)
 
     @staticmethod
     def format_scores(scores, ammount):
         scores = scores[-ammount:]
-
-
 
     @staticmethod
     def eval_local_safety(canvas, body):
@@ -927,13 +908,14 @@ class Game:
 
         return result
 
+    @staticmethod
+    def resource_path(relative_path):
+        """Function to return absolute paths. Used while creating .exe file."""
+        if hasattr(sys, '_MEIPASS'):
+            return path.join(sys._MEIPASS, relative_path)
 
-def resource_path(relative_path):
-    """Function to return absolute paths. Used while creating .exe file."""
-    if hasattr(sys, '_MEIPASS'):
-        return path.join(sys._MEIPASS, relative_path)
+        return path.join(path.dirname(path.realpath(__file__)), relative_path)
 
-    return path.join(path.dirname(path.realpath(__file__)), relative_path)
 
 VAR = GlobalVariables() # Initializing GlobalVariables
 LOGGER = logging.getLogger(__name__) # Setting logger
@@ -942,7 +924,8 @@ environ['SDL_VIDEO_CENTERED'] = '1' # Centering the window
 if __name__ == '__main__':
     # The main function where the game will be executed.
     logging.basicConfig(format = '%(asctime)s %(module)s %(levelname)s: %(message)s',
-                        datefmt = '%m/%d/%Y %I:%M:%S %p', level = logging.INFO)
+                        datefmt = '%m/%d/%Y %I:%M:%S %p',
+                        level = logging.INFO)
     GAME = Game(player = "HUMAN")
     GAME.create_window()
     GAME.start()
