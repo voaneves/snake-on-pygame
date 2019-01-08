@@ -79,13 +79,13 @@ $ python snake.py [-h]
 
 An example gameplay for a single player match is shown below.
 
-![Example gameplay](/resources/gifs/gameplay.gif)
+<p align="center">
+    <img src = "/resources/gifs/gameplay.gif"/>
+</p>
 
 In the benchmark mode, you will play through 10 games and your mean score/steps
 are going to be recorded and you can add to the leaderboards. Pull request
 changing the benchmark file ([located in here](resources/scores.json)) or open an issue with your score.
-
-
 
 ## 2. Getting Started (using AI agents) <a name="getting-started-ai"></a>
 
