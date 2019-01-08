@@ -7,7 +7,7 @@ snake-on-pygame
     <img src = "resources/images/snake_logo.png"/>
 </p>
 
-Snake game that can be controlled by human input and AI agents (DQN). Who's best? :snake: :8ball:
+Snake game that can be controlled by human input and AI agents (DQN). Who's best? :snake: :robot:
 
 Table of Contents
 =================
@@ -17,10 +17,10 @@ Table of Contents
     * [1.2. Installing](#installing-human)
     * [1.3. Playing](#playing-human)
 * [2. Getting Started (using AI agents)](#getting_started-ai)
-    * [2.1. Prerequisites](#pre-req-ai)
-    * [2.2. Installing](#installing-ai)
-    * [2.3. Training](#training-ai)
-    * [2.4. Testing](#testing-ai)
+    * [2.1. Available methods to integrate with any agent](#available-method)
+        * [2.1.1. Methods](#methods)
+        * [2.1.2. Example usage](#example-usage)
+    * [2.2. Using colab-rl](#using-colab-rl)
 * [3. Contributing](#contributing)
 * [4. License](#license)
 * [5. Acknowledgments](#acknowledgments)
@@ -77,9 +77,14 @@ and use:
 $ python snake.py [-h]
 ```
 
+An example gameplay for a single player match is shown below.
+
+![Example gameplay](/resources/gifs/gameplay.gif)
+
 In the benchmark mode, you will play through 10 games and your mean score/steps
 are going to be recorded and you can add to the leaderboards. Pull request
 changing the benchmark file ([located in here](resources/scores.json)) or open an issue with your score.
+
 
 
 ## 2. Getting Started (using AI agents) <a name="getting-started-ai"></a>
@@ -93,13 +98,79 @@ and the game, making the process of quick prototyping much easier.
 
 ### 2.1. Available methods to integrate with any agent <a name="available-methods"></a>
 
-#### 2.1.1. Methods <a name="training-on-colab-rl"></a>
+In this section, we're going to show the useful methods and properties and also
+demonstrate how to use in a real case
 
-#### 2.1.2. Example <a name="training-on-colab-rl"></a>
+#### 2.1.1. Methods and useful properties <a name="methods"></a>
+
+Below are listed some useful properties of the game class.
+
+```
+>>> print(game.nb_actions)
+5 # number of actions.
+
+>>> print(game.food_pos)
+(6, 5) # current position of food.
+
+>>> print(game.steps)
+10 # current number of steps in a given episode.
+
+>>> print(game.snake.length)
+4 # current length of the snake in a given episode.
+```
+
+The methods you could use to integrate with any AI agent are:
+
+```
+>>> state = game.reset()
+  # Reset the game and returns the game state right after resetting.
+
+>>> state = game.state()
+  # Get the current game state.
+
+>>> game.food_pos = game.generate_food()
+  # Update the food position.
+
+>>> state, reward, done, info = game.step(numerical_action)
+  # Play a numerical_action, obtaining state, reward, over and info.
+
+>>> game.render()
+  # Render the game in a pygame window.
+```
+
+#### 2.1.2. Example usage <a name="example-usage"></a>
+
+To use with AI agents, you need to integrate the game with the AI agent. An
+example usage is:
+
+```
+from snake-on-pygame import Game
+from ai_agent import your_model # import your AI agent of choice
+
+game = Game(player = "ROBOT",
+                board_size = board_size,
+                local_state = local_state,
+                relative_pos = RELATIVE_POS)
+state = game.reset()
+
+model = your_model()
+
+while not game.game_over:  # Main loop, until game_over
+    game.food_pos = game.generate_food()
+
+    model.choose_action(state)   # CHOOSE ACTION BASED ON MODEL/AI AGENT
+    state, reward, done, info = game.step(action)
+
+    mode.train(state, reward, game_over, done)
+    print(info)
+
+model.test()
+```
+
+The above code is an example usage for one episode. If you want more episodes,
+wrap the while loop in a loop for nb_epochs (you choose).
 
 ### 2.2. Using colab-rl <a name="using-colab-rl"></a>
-
-#### 2.2.1. Example <a name="training-on-colab-rl"></a>
 
 ## 3. Contributing <a name="contributing"></a>
 
