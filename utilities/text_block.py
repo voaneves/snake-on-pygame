@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """text_block: A utility meant to create/render blocks in a pygame window.
 """
@@ -21,7 +22,7 @@ class TextBlock:
         The text to be displayed.
     pos: tuple of 2 * int
         Color of the tail. End of the body color gradient.
-    screen: pygame window object
+    window: pygame window object
         The screen where the text is drawn.
     scale: int, optional, default = 1 / 12
         Adaptive scale to resize if the board size changes.
@@ -36,6 +37,7 @@ class TextBlock:
                  font_path,
                  scale = (1 / 12),
                  block_type = "text",
+                 background_color = None,
                  hovered_color = (42, 42, 42),
                  default_color = (152, 152, 152)):
         """Initialize, set position of the rectangle and render the text block."""
@@ -49,6 +51,7 @@ class TextBlock:
         self.scale = scale
         self.hovered_color = hovered_color
         self.default_color = default_color
+        self.background_color = background_color
         self.set_rect()
         self.draw()
 
@@ -90,7 +93,7 @@ class TextBlock:
         color: tuple of 3 * int
             The color that will be rendered for the background of the text block.
         """
-        color = None
+        color = self.background_color
 
         if self.block_type == "menu" and self.hovered:
             color = self.default_color
@@ -102,3 +105,53 @@ class TextBlock:
         self.set_rend()
         self.rect = self.rend.get_rect()
         self.rect.center = self.pos
+
+
+COLOR_INACTIVE = pygame.Color('lightskyblue3')
+COLOR_ACTIVE = pygame.Color('dodgerblue2')
+
+
+class InputBox:
+    def __init__(self, x, y, w, h, window, font_path, text=''):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.color = COLOR_INACTIVE
+        self.text = text
+        self.screen = window
+        self.font = pygame.font.Font(font_path,
+                                int(5))
+        self.txt_surface = self.font.render(text, True, self.color)
+        self.active = True
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # If the user clicked on the input_box rect.
+            if self.rect.collidepoint(event.pos):
+                # Toggle the active variable.
+                self.active = not self.active
+            else:
+                self.active = False
+            # Change the current color of the input box.
+            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+        if event.type == pygame.KEYDOWN:
+            if self.active:
+                if event.key == pygame.K_RETURN:
+                    return self.text
+                elif event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+                # Re-render the text.
+                self.txt_surface = self.font.render(self.text, True, self.color)
+
+        return None
+
+    def update(self):
+        # Resize the box if the text is too long.
+        width = max(200, self.txt_surface.get_width()+10)
+        self.rect.w = width
+
+    def draw(self):
+        # Blit the text.
+        self.screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        # Blit the rect.
+        pygame.draw.rect(self.screen, self.color, self.rect, 2)

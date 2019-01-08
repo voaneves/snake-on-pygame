@@ -1,6 +1,65 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-"""snake: A simple and fun exploration game, meant to be used by Human and AI.
+"""snake-on-pygame: A simple and fun snake game, playable by Human and AI.
+
+This module is the implementation of the snake game on pygame, focusing on speed
+and simplicity. It's playable by both humans and AI agents and it uses most of
+pygame's optimizations to deliver a smooth experience in testing/playing.
+
+Usage for human players
+----------
+    To play as a human, you only need to run this file, given you have the
+    needed dependencies.
+
+        $ python snake.py
+
+Usage for AI agents
+----------
+    To use with AI agents, you need to integrate the game with the AI agent. An
+    example usage is:
+
+        >>> from snake-on-pygame import Game
+        >>> game = Game(player = "ROBOT",
+                        board_size = board_size,
+                        local_state = local_state,
+                        relative_pos = RELATIVE_POS)
+
+    Useful properties:
+
+        >>> print(game.nb_actions)
+        5 # number of actions.
+
+        >>> print(game.food_pos)
+        (6, 5) # current position of food.
+
+        >>> print(game.steps)
+        10 # current number of steps in a given episode.
+
+        >>> print(game.snake.length)
+        4 # current length of the snake in a given episode.
+
+    Possible methods:
+
+        >>> state = game.reset()
+          Reset the game and returns the game state right after resetting.
+
+        >>> state = game.state()
+          Get the current game state.
+
+        >>> game.food_pos = game.generate_food()
+          Update the food position.
+
+        >>> state, reward, done, info = game.step(numerical_action)
+          Play a numerical_action, obtaining state, reward, over and info.
+
+        >>> game.render()
+          Render the game in a pygame window.
+
+TO DO
+----------
+    - Finish the InputBox class.
+    - Publish to pip.
 """
 
 import sys  # To close the window when the game is over
@@ -13,8 +72,9 @@ from itertools import tee  # For the color gradient on snake
 
 import pygame  # This is the engine used in the game
 import numpy as np # Used in calculations and math
+import pandas as pd # Used to manage the leaderboards data
 
-from utilities.text_block import TextBlock # Textblocks for pygame
+from utilities.text_block import TextBlock, InputBox # Textblocks for pygame
 
 __author__ = "Victor Neves"
 __license__ = "MIT"
@@ -83,9 +143,14 @@ class GlobalVariables:
     benchmark: int, optional, default = 10
         Ammount of matches to benchmark and possibly go to leaderboards.
     """
-    def __init__(self, board_size = 30, block_size = 20,
-                 head_color = (42, 42, 42), tail_color = (152, 152, 152),
-                 food_color = (200, 0, 0), game_speed = 80, benchmark = 10):
+    def __init__(self,
+                 board_size = 30,
+                 block_size = 20,
+                 head_color = (42, 42, 42),
+                 tail_color = (152, 152, 152),
+                 food_color = (200, 0, 0),
+                 game_speed = 80,
+                 benchmark = 1):
         """Initialize all global variables. Updated with argument_handler."""
         self.board_size = board_size
         self.block_size = block_size
@@ -132,7 +197,8 @@ class Snake:
         self.previous_action = 1
         self.length = 3
 
-    def is_movement_invalid(self, action):
+    def is_movement_invalid(self,
+                            action):
         """Check if the movement is invalid, according to FORBIDDEN_MOVES."""
         valid = False
 
@@ -141,7 +207,9 @@ class Snake:
 
         return valid
 
-    def move(self, action, food_pos):
+    def move(self,
+             action,
+             food_pos):
         """According to orientation, move 1 block. If the head is not positioned
         on food, pop a body part. Else, return without popping.
 
@@ -190,12 +258,14 @@ class FoodGenerator:
     is_food_on_screen:
         Flag for existence of food.
     """
-    def __init__(self, body):
+    def __init__(self,
+                 body):
         """Initialize a food piece and set existence flag."""
         self.is_food_on_screen = False
         self.pos = self.generate_food(body)
 
-    def generate_food(self, body):
+    def generate_food(self,
+                      body):
         """Generate food and verify if it's on a valid place.
 
         Return
@@ -249,7 +319,11 @@ class Game:
     screen_rect: tuple of 2 * int
         The screen rectangle, used to draw relatively positioned blocks.
     """
-    def __init__(self, player, board_size = 30, local_state = False, relative_pos = False):
+    def __init__(self,
+                 player = 'HUMAN',
+                 board_size = 30,
+                 local_state = False,
+                 relative_pos = False):
         """Initialize window, fps and score. Change nb_actions if relative_pos"""
         VAR.board_size = board_size
         self.local_state = local_state
@@ -293,8 +367,13 @@ class Game:
         self.screen_rect = self.window.get_rect()
         self.fps = pygame.time.Clock()
 
-    def cycle_menu(self, menu_options, list_menu, dictionary, img = None,
-                   img_rect = None):
+    def cycle_menu(self,
+                   menu_options,
+                   list_menu,
+                   dictionary,
+                   img = None,
+                   img_rect = None,
+                   leaderboards = False):
         """Cycle through a given menu, waiting for an option to be clicked."""
         selected = False
         selected_option = None
@@ -310,12 +389,25 @@ class Game:
                     option.draw()
                     option.hovered = False
 
-                    if option.rect.collidepoint(pygame.mouse.get_pos()):
+                    if (option.rect.collidepoint(pygame.mouse.get_pos())
+                        and option.block_type != 'text'):
                         option.hovered = True
 
                         for event in events:
                             if event.type == pygame.MOUSEBUTTONUP:
-                                selected_option = dictionary[list_menu[i]]
+                                if leaderboards:
+                                    opt = list_menu[i]
+
+                                    if opt == 'MENU':
+                                        return dictionary[opt], None
+                                    else:
+                                        pages = len(opt.rstrip('0123456789'))
+                                        page = int(opt[pages:])
+                                        selected_option = dictionary[opt[:pages]]
+
+                                        return selected_option, page
+                                else:
+                                    selected_option = dictionary[list_menu[i]]
 
             if selected_option is not None:
                 selected = True
@@ -329,13 +421,16 @@ class Game:
     def cycle_matches(self, n_matches, mega_hardcore = False):
         """Cycle through matches until the end."""
         score = array('i')
+        step = array('i')
 
         for _ in range(n_matches):
             self.reset()
             self.start_match(wait = 3)
-            score.append(self.single_player(mega_hardcore))
+            current_score, current_step = self.single_player(mega_hardcore)
+            score.append(current_score)
+            step.append(current_step)
 
-        return score
+        return score, step
 
     def menu(self):
         """Main menu of the game.
@@ -393,11 +488,11 @@ class Game:
     def start_match(self, wait):
         """Create some wait time before the actual drawing of the game."""
         for i in range(wait):
-            time = str(wait - i)
             self.window.fill(pygame.Color(225, 225, 225))
+            time = ' {:d} '.format(wait - i)
 
             # Game starts in 3, 2, 1
-            text = [TextBlock(text = 'Game starts in',
+            text = [TextBlock(text = ' Game starts in ',
                               pos = (self.screen_rect.centerx,
                                      4 * self.screen_rect.centery / 10),
                               canvas_size = VAR.canvas_size,
@@ -429,28 +524,31 @@ class Game:
         opt = self.menu()
 
         while True:
+            page = 1
+
             if opt == OPTIONS['QUIT']:
                 pygame.quit()
                 sys.exit()
             elif opt == OPTIONS['PLAY']:
                 VAR.game_speed, mega_hardcore = self.select_speed()
-                score = self.cycle_matches(n_matches = 1,
-                                           mega_hardcore = mega_hardcore)
-                opt = self.over(score)
+                score, _ = self.cycle_matches(n_matches = 1,
+                                              mega_hardcore = mega_hardcore)
+                opt = self.over(score, None)
             elif opt == OPTIONS['BENCHMARK']:
                 VAR.game_speed, mega_hardcore = self.select_speed()
-                score = self.cycle_matches(n_matches = VAR.benchmark,
-                                           mega_hardcore = mega_hardcore)
-                opt = self.over(score)
+                score, steps = self.cycle_matches(n_matches = VAR.benchmark,
+                                                  mega_hardcore = mega_hardcore)
+                opt = self.over(score, steps)
             elif opt == OPTIONS['LEADERBOARDS']:
-                self.view_leaderboards()
+                while page is not None:
+                    opt, page = self.view_leaderboards(page)
             elif opt == OPTIONS['MENU']:
                 opt = self.menu()
             if opt == OPTIONS['ADD_TO_LEADERBOARDS']:
-                self.add_to_leaderboards(score, None) # Gotta improve this logic.
-                self.view_leaderboards()
+                self.add_to_leaderboards(int(np.mean(score)), int(np.mean(steps)))
+                opt, page = self.view_leaderboards()
 
-    def over(self, score):
+    def over(self, score, step):
         """If collision with wall or body, end the game and open options.
 
         Return
@@ -592,7 +690,7 @@ class Game:
 
         score = current_size - 3  # After the game is over, record score
 
-        return score
+        return score, self.steps
 
     def check_collision(self):
         """Check wether any collisions happened with the wall or body.
@@ -653,7 +751,7 @@ class Game:
 
         if keys[pygame.K_ESCAPE] or keys[pygame.K_q]:
             LOGGER.info('ACTION: KEY PRESSED: ESCAPE or Q')
-            self.over(self.snake.length - 3)
+            self.over(self.snake.length - 3, self.steps)
         elif keys[pygame.K_LEFT]:
             LOGGER.info('ACTION: KEY PRESSED: LEFT')
             action = ABSOLUTE_ACTIONS['LEFT']
@@ -746,11 +844,6 @@ class Game:
         elif self.check_collision() or self.steps > 50 * self.snake.length:
             self.game_over = True
 
-    def step(self, action):
-        self.play(action)
-
-        return self.state(), self.get_reward(), self.game_over, None
-
     def get_reward(self):
         """Return the current reward. Can be used as the reward function.
 
@@ -785,6 +878,12 @@ class Game:
         pygame.display.set_caption("SNAKE GAME  |  Score: "
                                    + str(self.snake.length - 3))
 
+    def step(self, action):
+        """Play the action and returns state, reward and if over."""
+        self.play(action)
+
+        return self.state(), self.get_reward(), self.game_over, None
+
     def render(self):
         if not hasattr(self, 'window'):
             self.create_window()
@@ -800,22 +899,73 @@ class Game:
 
     def get_name(self):
         """See test.py in my desktop, for a textbox input in pygame"""
-        return None
+        done = False
+        box = InputBox(100, 300, 140, 32, window = self.window, font_path = self.resource_path("resources/fonts/product_sans_bold.ttf"))
+
+        while not done:
+            pygame.event.pump()
+            events = pygame.event.get()
+
+            for event in events:
+                if event.type == pygame.QUIT:
+                    done = True
+
+                text = box.handle_event(event)
+
+                if text is not None:
+                    done = True
+
+            box.update()
+            self.window.fill(pygame.Color(225, 225, 225))
+            box.draw()
+
+            pygame.display.update()
+
+        return text
 
     def add_to_leaderboards(self, score, step):
-        file_path = resource_path("resources/scores.json")
+        file_path = self.resource_path("resources/scores.json")
 
         name = self.get_name()
-        new_score = {'name': 'test',
+        new_score = {'name': str(name),
                      'ranking_data': {'score': score,
                                       'step': step}}
 
-        with open(file_path, 'w') as leaderboards_file:
-            json.dump(new_score, leaderboards_file)
+        if not path.isfile(file_path):
+            data = []
+            data.append(new_score)
+            print(new_score)
 
-    def view_leaderboards(self):
-        list_menu = ['MENU']
-        menu_options = [TextBlock(text = 'LEADERBOARDS',
+            with open(file_path, mode = 'w') as leaderboards_file:
+                json.dump(data, leaderboards_file, indent = 4)
+        else:
+            with open(file_path) as leaderboards_file:
+                data = json.load(leaderboards_file)
+
+            data.append(new_score)
+            data.sort(key = lambda e: e['ranking_data']['score'], reverse = True)
+
+            with open(file_path, mode = 'w') as leaderboards_file:
+                json.dump(data, leaderboards_file, indent = 4)
+
+    def view_leaderboards(self, page = 1):
+        file_path = self.resource_path("resources/scores.json")
+
+        with open(file_path, 'r') as leaderboards_file:
+            scores_data = json.loads(leaderboards_file.read())
+
+        dataframe = pd.DataFrame.from_dict(scores_data)
+        dataframe = pd.concat([dataframe.drop(['ranking_data'], axis = 1),
+                               dataframe['ranking_data'].apply(pd.Series)],
+                               axis = 1) # Separate 'ranking_data' into 2 cols
+        ammount_of_players = len(dataframe.index)
+        players_per_page = 5
+        number_of_pages = -(-ammount_of_players // players_per_page)
+        score_page = []
+        score_header = '  POS       NAME                       SCORE         STEP  '
+
+        list_menu = ['LEADERBOARDS']
+        menu_options = [TextBlock(text = ' LEADERBOARDS ',
                                   pos = (self.screen_rect.centerx,
                                          2 * self.screen_rect.centery / 10),
                                   canvas_size = VAR.canvas_size,
@@ -824,28 +974,70 @@ class Game:
                                   scale = (1 / 12),
                                   block_type = "text")]
 
-        file_path = resource_path("resources/scores.json")
+        list_menu.append('HEADER')
+        menu_options.append(TextBlock(text = score_header,
+                                  pos = (self.screen_rect.centerx,
+                                         4 * self.screen_rect.centery / 10),
+                                  canvas_size = VAR.canvas_size,
+                                  font_path = self.font_path,
+                                  window = self.window,
+                                  scale = (1 / 24),
+                                  block_type = "text",
+                                  background_color = (152, 152, 152)))
 
-        with open(file_path, 'r') as leaderboards_file:
-            scores_data = json.loads(leaderboards_file.read())
+        # Adding pages to the loop
+        for i in range(1, number_of_pages + 1):
+            score_page.append(dataframe.loc[dataframe.index.intersection(range(5 * (i - 1), 5 * i))])
 
-        scores_data.sort(key = operator.itemgetter('score'))
+            list_menu.append(('LEADERBOARDS{:d}'.format(i)))
+            menu_options.append(TextBlock(text = (' {:d} '.format(i)),
+                                          pos = ((2 * self.screen_rect.centerx
+                                                   / (number_of_pages + 1) * i),
+                                                 (13 * self.screen_rect.centery
+                                                  / 10)),
+                                          canvas_size = VAR.canvas_size,
+                                          font_path = self.font_path,
+                                          window = self.window,
+                                          scale = (1 / 18),
+                                          block_type = "menu"))
 
-#        for score in formatted_scores:
-#            menu_options.append(TextBlock(person_ranked,
-#                                (self.screen_rect.centerx,
-#                                10 * self.screen_rect.centery / 10),
-#                                self.window, (1 / 12), "text"))
+        for i, row in score_page[page - 1].iterrows():
+            list_menu.append(('RANK{:d}'.format(i)))
 
-        menu_options.append(TextBlock(text = 'MENU',
+            pos = '{0: <5}         '.format(1 + i)
+            name = '{0: <25}      '.format(row['name'])
+            score = '{0: <5}               '.format(row['score'])
+            step = '{0: <5}  '.format(row['step'])
+            data = pos + name + score + step
+            menu_options.append(TextBlock(text = data,
+                                          pos = (self.screen_rect.centerx,
+                                                 ((5 + 1.5 * (i - (page - 1) * 5))
+                                                  * (self.screen_rect.centery
+                                                     / 10))),
+                                          canvas_size = VAR.canvas_size,
+                                          font_path = self.font_path,
+                                          window = self.window,
+                                          scale = (1 / 24),
+                                          block_type = "text"))
+
+        list_menu.append('MENU')
+        menu_options.append(TextBlock(text = ' MENU ',
                                       pos = (self.screen_rect.centerx,
-                                             10 * self.screen_rect.centery / 10),
+                                             16 * self.screen_rect.centery / 10),
                                       canvas_size = VAR.canvas_size,
                                       font_path = self.font_path,
                                       window = self.window,
                                       scale = (1 / 12),
                                       block_type = "menu"))
-        selected_option = self.cycle_menu(menu_options, list_menu, OPTIONS)
+
+        selected_option, page = self.cycle_menu(menu_options,
+                                                list_menu,
+                                                OPTIONS,
+                                                leaderboards = True)
+
+        print(selected_option, page)
+
+        return selected_option, page
 
     @staticmethod
     def format_scores(scores, ammount):
