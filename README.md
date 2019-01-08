@@ -1,4 +1,4 @@
-snake-pygame
+snake-on-pygame
 =================
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/Neves4/snake-rl/graphs/commit-activity) [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/Neves4/ama)
@@ -7,7 +7,7 @@ snake-pygame
     <img src = "resources/images/snake_logo.png"/>
 </p>
 
-Snake game that can be controlled by human input and AI agents (DQN). Who's best? :8ball:
+Snake game that can be controlled by human input and AI agents (DQN). Who's best? :snake: :8ball:
 
 Table of Contents
 =================
@@ -51,10 +51,7 @@ $ pip3 install -r requirements_human.txt
 
 ### 1.2. Installing <a name="installing-human"></a>
 
-You can download the executable (WIP), download the source code or clone the
-repository to your computer.
-
-To download the executable, you can just [click here](stillnolink.com).
+You can download download the source code or clone the repository to your computer.
 
 To clone the repository, open bash or command prompt, cd to the chosen directory
 and run the following code:
@@ -70,9 +67,8 @@ then 'Download ZIP').
 
 ### 1.3. Playing <a name="playing-human"></a>
 
-If using the executable, just double-click it. The GUI allows you to choose between
-single games and the benchmark mode. It's also possible to choose between difficulties
-levels.
+The GUI allows you to choose between single games and the benchmark mode. It's
+also possible to choose between difficulty levels.
 
 If using the repository files, change directory to the root, then to the game folder
 and use:
@@ -81,9 +77,10 @@ and use:
 $ python snake.py [-h]
 ```
 
-If using benchmark mode, you will play through 10 games and your mean score/steps
-are going to be printed on the screen and console. Pull request changing the benchmark
-file (WIP) or open an issue with your score.
+In the benchmark mode, you will play through 10 games and your mean score/steps
+are going to be recorded and you can add to the leaderboards. Pull request
+changing the benchmark file ([located in here](resources/scores.json)) or open an issue with your score.
+
 
 ## 2. Getting Started (using AI agents) <a name="getting-started-ai"></a>
 
@@ -96,17 +93,13 @@ and the game, making the process of quick prototyping much easier.
 
 ### 2.1. Available methods to integrate with any agent <a name="available-methods"></a>
 
-#### 2.1.1. Training <a name="training-on-colab-rl"></a>
+#### 2.1.1. Methods <a name="training-on-colab-rl"></a>
 
-#### 2.1.2. Training <a name="training-on-colab-rl"></a>
-
-#### 2.1.3. Training <a name="training-on-colab-rl"></a>
+#### 2.1.2. Example <a name="training-on-colab-rl"></a>
 
 ### 2.2. Using colab-rl <a name="using-colab-rl"></a>
 
-#### 2.2.1. Training <a name="training-on-colab-rl"></a>
-
-#### 2.2.2. Testing <a name="testing-on-colab-rl"></a>
+#### 2.2.1. Example <a name="training-on-colab-rl"></a>
 
 ## 3. Contributing <a name="contributing"></a>
 
@@ -119,3 +112,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 5. Acknowledgments <a name="acknowledgments"></a>
 
 * @farizrahman4u - For his [qlearning4k](https://github.com/farizrahman4u/qlearning4k) snake code, I used it as the base of this repo's code.
+
+* @chuyangliu - Also for his snake code, which implemented the relative actions.
