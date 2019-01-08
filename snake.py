@@ -150,7 +150,7 @@ class GlobalVariables:
                  tail_color = (152, 152, 152),
                  food_color = (200, 0, 0),
                  game_speed = 80,
-                 benchmark = 1):
+                 benchmark = 10):
         """Initialize all global variables. Updated with argument_handler."""
         self.board_size = board_size
         self.block_size = block_size
