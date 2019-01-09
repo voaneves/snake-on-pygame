@@ -170,7 +170,25 @@ model.test()
 The above code is an example usage for one episode. If you want more episodes,
 wrap the while loop in a loop for nb_epochs (you choose).
 
-### 2.2. Using colab-rl <a name="using-colab-rl"></a>
+### 2.2. Using with colab-rl <a name="using-colab-rl"></a>
+
+Using snake-on-pygame with [colab-rl (click here)](https://github.com/Neves4/colab-rl) is very straightforward
+and you can also experiment with hyperparameters on state-of-the-art algorithms.
+
+A detailed usage is described on the repo's main README, but for short, after
+cloning it you can just execute the run_dqn.py script with:
+
+```
+$ python run_dqn.py [-h]
+```
+
+And you can read more about all the possible arguments in the file/repo. An
+trained DQN model, on a 10 x 10 board with no customization is represented on the
+below GIF.
+
+<p align="center">
+    <img src = "/resources/gifs/dqn_gameplay.gif"/>
+</p>
 
 ## 3. Contributing <a name="contributing"></a>
 
