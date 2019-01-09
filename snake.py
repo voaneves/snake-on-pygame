@@ -150,7 +150,7 @@ class GlobalVariables:
                  tail_color = (152, 152, 152),
                  food_color = (200, 0, 0),
                  game_speed = 80,
-                 benchmark = 10):
+                 benchmark = 1):
         """Initialize all global variables. Updated with argument_handler."""
         self.board_size = board_size
         self.block_size = block_size
@@ -480,8 +480,11 @@ class Game:
                                   window = self.window,
                                   scale = (1 / 12),
                                   block_type = "menu")]
-        selected_option = self.cycle_menu(menu_options, list_menu, OPTIONS,
-                                          img, img_rect)
+        selected_option = self.cycle_menu(menu_options,
+                                          list_menu,
+                                          OPTIONS,
+                                          img,
+                                          img_rect)
 
         return selected_option
 
@@ -898,9 +901,23 @@ class Game:
         self.fps.tick(60)  # Limit FPS to 100
 
     def get_name(self):
-        """See test.py in my desktop, for a textbox input in pygame"""
+        """See test.py in my desktop, for a textinput_box input in pygame"""
         done = False
-        box = InputBox(100, 300, 140, 32, window = self.window, font_path = self.resource_path("resources/fonts/product_sans_bold.ttf"))
+        input_box = InputBox(x = 200,
+                             y = 300,
+                             w = 140,
+                             h = 32,
+                             window = self.window,
+                             font_path = self.resource_path("resources/fonts/product_sans_bold.ttf"))
+
+        text_block = TextBlock(text = ' YOUR NAME ',
+                               pos = (self.screen_rect.centerx,
+                                      0.9 * self.screen_rect.centery),
+                               canvas_size = VAR.canvas_size,
+                               font_path = self.font_path,
+                               window = self.window,
+                               scale = (1 / 24),
+                               block_type = "text")
 
         while not done:
             pygame.event.pump()
@@ -910,14 +927,15 @@ class Game:
                 if event.type == pygame.QUIT:
                     done = True
 
-                text = box.handle_event(event)
+                text = input_box.handle_event(event)
 
                 if text is not None:
                     done = True
 
-            box.update()
+            input_box.update()
             self.window.fill(pygame.Color(225, 225, 225))
-            box.draw()
+            input_box.draw()
+            text_block.draw()
 
             pygame.display.update()
 
@@ -934,7 +952,6 @@ class Game:
         if not path.isfile(file_path):
             data = []
             data.append(new_score)
-            print(new_score)
 
             with open(file_path, mode = 'w') as leaderboards_file:
                 json.dump(data, leaderboards_file, indent = 4)
@@ -1034,8 +1051,6 @@ class Game:
                                                 list_menu,
                                                 OPTIONS,
                                                 leaderboards = True)
-
-        print(selected_option, page)
 
         return selected_option, page
 

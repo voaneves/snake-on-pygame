@@ -107,8 +107,8 @@ class TextBlock:
         self.rect.center = self.pos
 
 
-COLOR_INACTIVE = pygame.Color('lightskyblue3')
-COLOR_ACTIVE = pygame.Color('dodgerblue2')
+COLOR_INACTIVE = pygame.Color(152, 152, 152)
+COLOR_ACTIVE = pygame.Color(42, 42, 42)
 
 
 class InputBox:
@@ -118,9 +118,9 @@ class InputBox:
         self.text = text
         self.screen = window
         self.font = pygame.font.Font(font_path,
-                                int(5))
+                                     int(20))
         self.txt_surface = self.font.render(text, True, self.color)
-        self.active = True
+        self.active = False
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -139,7 +139,8 @@ class InputBox:
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 else:
-                    self.text += event.unicode
+                    if len(self.text) < 15:
+                        self.text += event.unicode
                 # Re-render the text.
                 self.txt_surface = self.font.render(self.text, True, self.color)
 
