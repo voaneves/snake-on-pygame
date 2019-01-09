@@ -29,7 +29,7 @@ Table of Contents
 
 Let's get the game up and running on your computer, with the instructions below.
 You can play the game and compare to the repos benchmark, which includes AI and
-humans (you can include yourself by a pull request - WIP).
+humans (you can include yourself by a pull request to the file [scores.json](resources/scores.json)).
 
 ### 1.1. Prerequisites <a name="pre-req-human"></a>
 
