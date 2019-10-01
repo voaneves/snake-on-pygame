@@ -58,7 +58,6 @@ Usage for AI agents
 
 TO DO
 ----------
-    - Finish the InputBox class.
     - Publish to pip.
 """
 
@@ -440,7 +439,7 @@ class Game:
         selected_option: int
             The selected option in the main loop.
         """
-        pygame.display.set_caption("SNAKE GAME  | PLAY NOW!")
+        pygame.display.set_caption("snake-on-pygme | PLAY NOW!")
 
         img = pygame.image.load(self.logo_path).convert()
         img = pygame.transform.scale(img, (VAR.canvas_size,
@@ -516,7 +515,7 @@ class Game:
                 text_block.draw()
 
             pygame.display.update()
-            pygame.display.set_caption("SNAKE GAME  |  Game starts in "
+            pygame.display.set_caption("snake-on-pygame  |  Game starts in "
                                        + time + " second(s) ...")
             pygame.time.wait(1000)
 
@@ -607,7 +606,7 @@ class Game:
                                   window = self.window,
                                   scale = (1 / 10),
                                   block_type = "text")]
-        pygame.display.set_caption("SNAKE GAME  | " + text_score
+        pygame.display.set_caption("snake-on-pygame  |  " + text_score
                                    + "  |  GAME OVER...")
         LOGGER.info('EVENT: GAME OVER | FINAL %s', text_score)
         selected_option = self.cycle_menu(menu_options, list_menu, OPTIONS)
@@ -665,13 +664,12 @@ class Game:
         while not self.game_over:
             elapsed += self.fps.get_time()  # Get elapsed time since last call.
 
-            if mega_hardcore:  # Progressive speed increments, the hardest.
+            if mega_hardcore:  # Progressive speed increments, the hardest level.
                 move_wait = VAR.game_speed - (2 * (self.snake.length - 3))
 
             key_input = self.handle_input()  # Receive inputs with tick.
-            invalid_key = self.snake.is_movement_invalid(key_input)
 
-            if key_input is not None and not invalid_key:
+            if key_input is not None:
                 last_key = key_input
 
             if elapsed >= move_wait:  # Move and redraw
@@ -878,7 +876,7 @@ class Game:
                          self.food_pos[1] * VAR.block_size, VAR.block_size,
                          VAR.block_size))
 
-        pygame.display.set_caption("SNAKE GAME  |  Score: "
+        pygame.display.set_caption("snake-on-pygame  |  Score: "
                                    + str(self.snake.length - 3))
 
     def step(self, action):
