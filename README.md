@@ -46,7 +46,13 @@ It's highly recommended to use Anaconda to manage your Python packages and envir
 If you chose not to, make sure you run requirements_human.txt, using:
 
 ```
-$ pip3 install -r requirements_human.txt
+$ python install setup.py
+```
+
+or
+
+```
+$ python3 install setup.py
 ```
 
 ### 1.2. Installing <a name="installing-human"></a>
