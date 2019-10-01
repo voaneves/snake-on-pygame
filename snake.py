@@ -199,12 +199,13 @@ class Snake:
     def is_movement_invalid(self,
                             action):
         """Check if the movement is invalid, according to FORBIDDEN_MOVES."""
-        valid = False
+        invalid = False
 
-        if (action, self.previous_action) in FORBIDDEN_MOVES:
-            valid = True
+        if ((action, self.previous_action) in FORBIDDEN_MOVES or
+            action == ABSOLUTE_ACTIONS['IDLE']):
+            invalid = True
 
-        return valid
+        return invalid
 
     def move(self,
              action,
@@ -219,8 +220,7 @@ class Snake:
         """
         ate_food = False
 
-        if (action == ABSOLUTE_ACTIONS['IDLE'] or
-            self.is_movement_invalid(action)):
+        if self.is_movement_invalid(action):
             action = self.previous_action
         else:
             self.previous_action = action
