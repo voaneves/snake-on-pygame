@@ -1,2 +1,6 @@
 
 *.pyc
+
+snake_on_pygame.egg-info/
+
+dist/
