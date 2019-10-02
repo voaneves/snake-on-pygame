@@ -96,18 +96,8 @@ setup(
         #   5 - Production/Stable
         'Development Status :: 5 - Production/Stable',
 
-        # Indicate who your project is intended for
-        'Intended Audience :: Everyone',
-        'Topic :: Pygame / Python games :: Snake',
-
         # Pick your license as you wish
         'License :: OSI Approved :: MIT License',
-
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
-        # These classifiers are *not* checked by 'pip install'. See instead
-        # 'python_requires' below.
-        'Programming Language :: Python :: >=2.7',
     ],
 
     # This field adds keywords for your project which will appear on the
