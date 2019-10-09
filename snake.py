@@ -669,6 +669,8 @@ class Game:
 
             key_input = self.handle_input()  # Receive inputs with tick.
 
+            if key_input == 'Q':
+                return current_size - 3, self.steps
             if key_input is not None:
                 last_key = key_input
 
@@ -752,7 +754,7 @@ class Game:
 
         if keys[pygame.K_ESCAPE] or keys[pygame.K_q]:
             LOGGER.info('ACTION: KEY PRESSED: ESCAPE or Q')
-            self.over(self.snake.length - 3, self.steps)
+            action = 'Q'
         elif keys[pygame.K_LEFT]:
             LOGGER.info('ACTION: KEY PRESSED: LEFT')
             action = ABSOLUTE_ACTIONS['LEFT']
