@@ -29,17 +29,20 @@ class TextBlock:
     type: string, optional, default = "text"
         Assert whether the BlockText is a text or menu option.
     """
-    def __init__(self,
-                 text,
-                 pos,
-                 window,
-                 canvas_size,
-                 font_path,
-                 scale = (1 / 12),
-                 block_type = "text",
-                 background_color = None,
-                 hovered_color = (42, 42, 42),
-                 default_color = (152, 152, 152)):
+
+    def __init__(
+        self,
+        text,
+        pos,
+        window,
+        canvas_size,
+        font_path,
+        scale=(1 / 12),
+        block_type="text",
+        background_color=None,
+        hovered_color=(42, 42, 42),
+        default_color=(152, 152, 152),
+    ):
         """Initialize, set position of the rectangle and render the text block."""
         self.block_type = block_type
         self.hovered = False
@@ -58,17 +61,14 @@ class TextBlock:
     def draw(self):
         """Set what to render and blit on the pygame screen."""
         self.set_rend()
-        self.screen.blit(self.rend,
-                         self.rect)
+        self.screen.blit(self.rend, self.rect)
 
     def set_rend(self):
         """Set what to render (font, colors, sizes)"""
-        font = pygame.font.Font(self.font_path,
-                                int((self.canvas_size) * self.scale))
-        self.rend = font.render(self.text,
-                                True,
-                                self.get_color(),
-                                self.get_background())
+        font = pygame.font.Font(self.font_path, int((self.canvas_size) * self.scale))
+        self.rend = font.render(
+            self.text, True, self.get_color(), self.get_background()
+        )
 
     def get_color(self):
         """Get color to render for text and menu (hovered or not).
@@ -112,13 +112,12 @@ COLOR_ACTIVE = pygame.Color(42, 42, 42)
 
 
 class InputBox:
-    def __init__(self, x, y, w, h, window, font_path, text=''):
+    def __init__(self, x, y, w, h, window, font_path, text=""):
         self.rect = pygame.Rect(x, y, w, h)
         self.color = COLOR_INACTIVE
         self.text = text
         self.screen = window
-        self.font = pygame.font.Font(font_path,
-                                     int(20))
+        self.font = pygame.font.Font(font_path, int(20))
         self.txt_surface = self.font.render(text, True, self.color)
         self.active = False
 
@@ -148,11 +147,11 @@ class InputBox:
 
     def update(self):
         # Resize the box if the text is too long.
-        width = max(200, self.txt_surface.get_width()+10)
+        width = max(200, self.txt_surface.get_width() + 10)
         self.rect.w = width
 
     def draw(self):
         # Blit the text.
-        self.screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        self.screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
         # Blit the rect.
         pygame.draw.rect(self.screen, self.color, self.rect, 2)
