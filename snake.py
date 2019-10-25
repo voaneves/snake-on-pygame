@@ -184,7 +184,7 @@ class Snake:
         self.body = [
             [self.head[0], self.head[1]],
             [self.head[0] - 1, self.head[1]],
-            [self.head[0] - 2, self.head[1]]
+            [self.head[0] - 2, self.head[1]],
         ]
         self.previous_action = 1
         self.length = 3
@@ -193,8 +193,10 @@ class Snake:
         """Check if the movement is invalid, according to FORBIDDEN_MOVES."""
         invalid = False
 
-        if ((action, self.previous_action)
-            in FORBIDDEN_MOVES or action == ABSOLUTE_ACTIONS["IDLE"]):
+        if (
+            action,
+            self.previous_action,
+        ) in FORBIDDEN_MOVES or action == ABSOLUTE_ACTIONS["IDLE"]:
             invalid = True
 
         return invalid
@@ -311,11 +313,7 @@ class Game:
     """
 
     def __init__(
-        self,
-        player="HUMAN",
-        board_size=30,
-        local_state=False,
-        relative_pos=False
+        self, player="HUMAN", board_size=30, local_state=False, relative_pos=False
     ):
         """Initialize window, fps and score. Change nb_actions if relative_pos"""
         VAR.board_size = board_size
