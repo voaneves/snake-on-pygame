@@ -433,7 +433,7 @@ class Game:
         selected_option: int
             The selected option in the main loop.
         """
-        pygame.display.set_caption("snake-on-pygme | PLAY NOW!")
+        pygame.display.set_caption("snake-on-pygame | PLAY NOW!")
 
         img = pygame.image.load(self.logo_path).convert()
         img = pygame.transform.scale(img, (VAR.canvas_size, int(VAR.canvas_size / 3)))
