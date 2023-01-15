@@ -1,10 +1,3 @@
-"""A setuptools based setup module.
-
-See:
-    https://packaging.python.org/guides/distributing-packages-using-setuptools/
-    https://github.com/pypa/sampleproject
-"""
-
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 from os import path
@@ -15,11 +8,11 @@ from os import path
 # Python 3 only projects can skip this import
 from io import open
 
-here = path.abspath(path.dirname(__file__))
+project_dir = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
+with open(path.join(project_dir, "README.md"), encoding="utf-8") as readme_file:
+    long_description = readme_file.read()
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.

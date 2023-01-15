@@ -172,7 +172,7 @@ class Snake:
         The head of the snake, located according to the board size.
     body: list of lists of 2 * int
         Starts with 3 parts and grows when food is eaten.
-    previous_action: int, default = 1
+    prev_action: int, default = 1
         Last action which the snake took.
     length: int, default = 3
         Variable length of the snake, can increase when food is eaten.
@@ -186,55 +186,59 @@ class Snake:
             [self.head[0] - 1, self.head[1]],
             [self.head[0] - 2, self.head[1]],
         ]
-        self.previous_action = 1
+        self.prev_action = 1
         self.length = 3
 
-    def is_movement_invalid(self, action):
+    def is_move_invalid(self, action):
         """Check if the movement is invalid, according to FORBIDDEN_MOVES."""
-        invalid = False
-
-        if (
+        return (
             action,
-            self.previous_action,
-        ) in FORBIDDEN_MOVES or action == ABSOLUTE_ACTIONS["IDLE"]:
-            invalid = True
-
-        return invalid
+            self.prev_action,
+        ) in FORBIDDEN_MOVES or action == ABSOLUTE_ACTIONS["IDLE"]
 
     def move(self, action, food_pos):
-        """According to orientation, move 1 block. If the head is not positioned
-        on food, pop a body part. Else, return without popping.
+        """Move 1 block according to orientation.
+        If the head is not positioned on food, pop a body part.
+        Else, return without popping.
 
         Return
         ----------
         ate_food: boolean
             Flag which represents whether the snake ate or not food.
         """
-        ate_food = False
+        if not self.is_move_invalid(action):
+            self.prev_action = action
 
-        if self.is_movement_invalid(action):
-            action = self.previous_action
-        else:
-            self.previous_action = action
-
-        if action == ABSOLUTE_ACTIONS["LEFT"]:
-            self.head[0] -= 1
-        elif action == ABSOLUTE_ACTIONS["RIGHT"]:
-            self.head[0] += 1
-        elif action == ABSOLUTE_ACTIONS["UP"]:
-            self.head[1] -= 1
-        elif action == ABSOLUTE_ACTIONS["DOWN"]:
-            self.head[1] += 1
+        directions = [
+            ABSOLUTE_ACTIONS["LEFT"],
+            ABSOLUTE_ACTIONS["RIGHT"],
+            ABSOLUTE_ACTIONS["UP"],
+            ABSOLUTE_ACTIONS["DOWN"],
+        ]
+        if action in directions:
+            self.head[0] += (
+                1
+                if action == ABSOLUTE_ACTIONS["RIGHT"]
+                else -1
+                if action == ABSOLUTE_ACTIONS["LEFT"]
+                else 0
+            )
+            self.head[1] += (
+                1
+                if action == ABSOLUTE_ACTIONS["DOWN"]
+                else -1
+                if action == ABSOLUTE_ACTIONS["UP"]
+                else 0
+            )
 
         self.body.insert(0, list(self.head))
+        ate_food = self.head == food_pos
 
-        if self.head == food_pos:
+        if not ate_food:
+            self.body.pop()
+        else:
             LOGGER.info("EVENT: FOOD EATEN")
             self.length = len(self.body)
-
-            ate_food = True
-        else:
-            self.body.pop()
 
         return ate_food
 
@@ -328,7 +332,7 @@ class Game:
                 self.nb_actions = 5
 
             self.action_space = self.nb_actions
-            self.observation_space = np.empty(shape=(board_size ** 2,))
+            self.observation_space = np.empty(shape=(board_size**2,))
 
             self.reset()
 
@@ -435,63 +439,41 @@ class Game:
         """
         pygame.display.set_caption("snake-on-pygame | PLAY NOW!")
 
-        img = pygame.image.load(self.logo_path).convert()
-        img = pygame.transform.scale(img, (VAR.canvas_size, int(VAR.canvas_size / 3)))
-        img_rect = img.get_rect()
-        img_rect.center = self.screen_rect.center
-        list_menu = ["PLAY", "BENCHMARK", "LEADERBOARDS", "QUIT"]
-        menu_options = [
-            TextBlock(
-                text=" PLAY GAME ",
-                pos=(self.screen_rect.centerx, 4 * self.screen_rect.centery / 10),
-                canvas_size=VAR.canvas_size,
-                font_path=self.font_path,
-                window=self.window,
-                scale=(1 / 12),
-                block_type="menu",
-            ),
-            TextBlock(
-                text=" BENCHMARK ",
-                pos=(self.screen_rect.centerx, 6 * self.screen_rect.centery / 10),
-                canvas_size=VAR.canvas_size,
-                font_path=self.font_path,
-                window=self.window,
-                scale=(1 / 12),
-                block_type="menu",
-            ),
-            TextBlock(
-                text=" LEADERBOARDS ",
-                pos=(self.screen_rect.centerx, 8 * self.screen_rect.centery / 10),
-                canvas_size=VAR.canvas_size,
-                font_path=self.font_path,
-                window=self.window,
-                scale=(1 / 12),
-                block_type="menu",
-            ),
-            TextBlock(
-                text=" QUIT ",
-                pos=(self.screen_rect.centerx, 10 * self.screen_rect.centery / 10),
-                canvas_size=VAR.canvas_size,
-                font_path=self.font_path,
-                window=self.window,
-                scale=(1 / 12),
-                block_type="menu",
-            ),
-        ]
-        selected_option = self.cycle_menu(
-            menu_options, list_menu, OPTIONS, img, img_rect
-        )
+        logo = pygame.image.load(self.logo_path).convert()
+        logo = pygame.transform.scale(logo, (VAR.canvas_size, int(VAR.canvas_size / 3)))
+        logo_rect = logo.get_rect()
+        logo_rect.center = self.screen_rect.center
 
-        return selected_option
+        options = ["PLAY", "BENCHMARK", "LEADERBOARDS", "QUIT"]
+        blocks = []
+
+        for option in options:
+            blocks.append(
+                TextBlock(
+                    text=f" {option.upper()} ",
+                    pos=(
+                        self.screen_rect.centerx,
+                        (options.index(option) * 2 + 4) * self.screen_rect.centery / 10,
+                    ),
+                    canvas_size=VAR.canvas_size,
+                    font_path=self.font_path,
+                    window=self.window,
+                    scale=(1 / 12),
+                    block_type="menu",
+                )
+            )
+
+        selection = self.cycle_menu(blocks, options, OPTIONS, logo, logo_rect)
+
+        return selection
 
     def start_match(self, wait):
         """Create some wait time before the actual drawing of the game."""
         for i in range(wait):
             self.window.fill(pygame.Color(225, 225, 225))
-            time = " {:d} ".format(wait - i)
+            count_down = " {:d} ".format(wait - i)
 
-            # Game starts in 3, 2, 1
-            text = [
+            text_blocks = [
                 TextBlock(
                     text=" Game starts in ",
                     pos=(self.screen_rect.centerx, 4 * self.screen_rect.centery / 10),
@@ -502,7 +484,7 @@ class Game:
                     block_type="text",
                 ),
                 TextBlock(
-                    text=time,
+                    text=count_down,
                     pos=(self.screen_rect.centerx, 12 * self.screen_rect.centery / 10),
                     canvas_size=VAR.canvas_size,
                     font_path=self.font_path,
@@ -512,12 +494,12 @@ class Game:
                 ),
             ]
 
-            for text_block in text:
-                text_block.draw()
+            for tb in text_blocks:
+                tb.draw()
 
             pygame.display.update()
             pygame.display.set_caption(
-                "snake-on-pygame  |  Game starts in " + time + " second(s) ..."
+                "snake-on-pygame  |  Game starts in " + count_down + " second(s) ..."
             )
             pygame.time.wait(1000)
 
@@ -656,58 +638,47 @@ class Game:
         return speed, mega_hardcore
 
     def single_player(self, mega_hardcore=False):
-        """Game loop for single_player (HUMANS).
+        """Play single player game.
 
         Return
         ----------
         score: int
             The final score for the match (discounted of initial length).
         """
-        # The main loop, it pump key_presses and update the board every tick.
-        previous_size = self.snake.length  # Initial size of the snake
-        current_size = previous_size  # Initial size
-        color_list = self.gradient([(VAR.head_color), (VAR.tail_color)], previous_size)
-
-        # Main loop, where snakes moves after elapsed time is bigger than the
-        # move_wait time. The last_key pressed is recorded to make the game more
-        # smooth for human players.
-        elapsed = 0
-        last_key = self.snake.previous_action
-        move_wait = VAR.game_speed
+        init_len, curr_len = self.snake.length, self.snake.length
+        color_list = self.gradient([VAR.head_color, VAR.tail_color], init_len)
+        elapsed_time, move_wait, last_key = 0, VAR.game_speed, self.snake.prev_action
 
         while not self.game_over:
-            elapsed += self.fps.get_time()  # Get elapsed time since last call.
+            elapsed_time += self.fps.get_time()
 
-            if mega_hardcore:  # Progressive speed increments, the hardest level.
+            if mega_hardcore:
                 move_wait = VAR.game_speed - (2 * (self.snake.length - 3))
 
-            key_input = self.handle_input()  # Receive inputs with tick.
+            key_input = self.handle_input()
 
             if key_input == "Q":
-                return current_size - 3, self.steps
+                break
             if key_input is not None:
                 last_key = key_input
 
-            if elapsed >= move_wait:  # Move and redraw
-                elapsed = 0
+            if elapsed_time >= move_wait:
+                elapsed_time = 0
                 self.play(last_key)
-                current_size = self.snake.length  # Update the body size
+                curr_len = self.snake.length
 
-                if current_size > previous_size:
+                if curr_len > init_len:
                     color_list = self.gradient(
-                        [(VAR.head_color), (VAR.tail_color)], current_size
+                        [VAR.head_color, VAR.tail_color], curr_len
                     )
-
-                    previous_size = current_size
+                    init_len = curr_len
 
                 self.draw(color_list)
 
             pygame.display.update()
-            self.fps.tick(GAME_FPS)  # Limit FPS to 100
+            self.fps.tick(GAME_FPS)
 
-        score = current_size - 3  # After the game is over, record score
-
-        return score, self.steps
+        return curr_len - 3, self.steps
 
     def check_collision(self):
         """Check wether any collisions happened with the wall or body.
@@ -718,15 +689,18 @@ class Game:
             Whether the snake collided or not.
         """
         collided = False
+        wall_size = VAR.board_size - 1
 
-        if self.snake.head[0] > (VAR.board_size - 1) or self.snake.head[0] < 0:
-            LOGGER.info("EVENT: WALL COLLISION")
-            collided = True
-        elif self.snake.head[1] > (VAR.board_size - 1) or self.snake.head[1] < 0:
-            LOGGER.info("EVENT: WALL COLLISION")
-            collided = True
-        elif self.snake.head in self.snake.body[1:]:
-            LOGGER.info("EVENT: BODY COLLISION")
+        if any(
+            [
+                self.snake.head[0] >= wall_size,
+                self.snake.head[0] < 0,
+                self.snake.head[1] >= wall_size,
+                self.snake.head[1] < 0,
+                self.snake.head in self.snake.body[1:],
+            ]
+        ):
+            LOGGER.info("EVENT: COLLISION")
             collided = True
 
         return collided
@@ -794,15 +768,11 @@ class Game:
         """
         canvas = np.zeros((VAR.board_size, VAR.board_size))
 
-        if self.game_over:
-            pass
-        else:
+        if not self.game_over:
             body = self.snake.body
-
+            canvas[body[0][0], body[0][1]] = POINT_TYPE["HEAD"]
             for part in body:
                 canvas[part[0], part[1]] = POINT_TYPE["BODY"]
-
-            canvas[body[0][0], body[0][1]] = POINT_TYPE["HEAD"]
 
             if self.local_state:
                 canvas = self.eval_local_safety(canvas, body)
@@ -820,22 +790,22 @@ class Game:
             Translated action from relative to absolute.
         """
         if action == RELATIVE_ACTIONS["FORWARD"]:
-            action = self.snake.previous_action
+            action = self.snake.prev_action
         elif action == RELATIVE_ACTIONS["LEFT"]:
-            if self.snake.previous_action == ABSOLUTE_ACTIONS["LEFT"]:
+            if self.snake.prev_action == ABSOLUTE_ACTIONS["LEFT"]:
                 action = ABSOLUTE_ACTIONS["DOWN"]
-            elif self.snake.previous_action == ABSOLUTE_ACTIONS["RIGHT"]:
+            elif self.snake.prev_action == ABSOLUTE_ACTIONS["RIGHT"]:
                 action = ABSOLUTE_ACTIONS["UP"]
-            elif self.snake.previous_action == ABSOLUTE_ACTIONS["UP"]:
+            elif self.snake.prev_action == ABSOLUTE_ACTIONS["UP"]:
                 action = ABSOLUTE_ACTIONS["LEFT"]
             else:
                 action = ABSOLUTE_ACTIONS["RIGHT"]
         else:
-            if self.snake.previous_action == ABSOLUTE_ACTIONS["LEFT"]:
+            if self.snake.prev_action == ABSOLUTE_ACTIONS["LEFT"]:
                 action = ABSOLUTE_ACTIONS["UP"]
-            elif self.snake.previous_action == ABSOLUTE_ACTIONS["RIGHT"]:
+            elif self.snake.prev_action == ABSOLUTE_ACTIONS["RIGHT"]:
                 action = ABSOLUTE_ACTIONS["DOWN"]
-            elif self.snake.previous_action == ABSOLUTE_ACTIONS["UP"]:
+            elif self.snake.prev_action == ABSOLUTE_ACTIONS["UP"]:
                 action = ABSOLUTE_ACTIONS["RIGHT"]
             else:
                 action = ABSOLUTE_ACTIONS["LEFT"]
@@ -871,10 +841,8 @@ class Game:
         """
         reward = REWARDS["MOVE"]
 
-        if self.game_over:
-            reward = REWARDS["GAME_OVER"]
-        elif self.scored:
-            reward = self.snake.length
+        if self.game_over or self.scored:
+            reward = REWARDS["GAME_OVER"] if self.game_over else self.snake.length
 
         return reward
 
@@ -1119,18 +1087,18 @@ class Game:
         canvas: np.array of size board_size**2
             After using game expertise, change canvas values to DANGEROUS if true.
         """
-        if (body[0][0] + 1) > (VAR.board_size - 1) or (
-            [body[0][0] + 1, body[0][1]]
-        ) in body[1:]:
-            canvas[VAR.board_size - 1, 0] = POINT_TYPE["DANGEROUS"]
-        if (body[0][0] - 1) < 0 or ([body[0][0] - 1, body[0][1]]) in body[1:]:
-            canvas[VAR.board_size - 1, 1] = POINT_TYPE["DANGEROUS"]
-        if (body[0][1] - 1) < 0 or ([body[0][0], body[0][1] - 1]) in body[1:]:
-            canvas[VAR.board_size - 1, 2] = POINT_TYPE["DANGEROUS"]
-        if (body[0][1] + 1) > (VAR.board_size - 1) or (
-            [body[0][0], body[0][1] + 1]
-        ) in body[1:]:
-            canvas[VAR.board_size - 1, 3] = POINT_TYPE["DANGEROUS"]
+        possible_positions = [
+            (body[0][0] + 1, 0),
+            (body[0][0] - 1, 1),
+            (body[0][1] - 1, 2),
+            (body[0][1] + 1, 3),
+        ]
+
+        for pos in possible_positions:
+            if (pos[0] > (VAR.board_size - 1) or pos[0] < 0) or (
+                (pos[0], pos[1])
+            ) in body[1:]:
+                canvas[VAR.board_size - 1, pos[1]] = POINT_TYPE["DANGEROUS"]
 
         return canvas
 
