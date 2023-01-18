@@ -78,12 +78,11 @@ class TextBlock:
         color: tuple of 3 * int
             The color that will be rendered for the text block.
         """
-        color = self.hovered_color
-
-        if self.block_type == "menu" and not self.hovered:
-            color = self.default_color
-
-        return color
+        return (
+            self.default_color
+            if self.block_type == "menu" and not self.hovered
+            else self.hovered_color
+        )
 
     def get_background(self):
         """Get background color to render for text (hovered or not) and menu.
@@ -93,12 +92,11 @@ class TextBlock:
         color: tuple of 3 * int
             The color that will be rendered for the background of the text block.
         """
-        color = self.background_color
-
-        if self.block_type == "menu" and self.hovered:
-            color = self.default_color
-
-        return color
+        return (
+            self.default_color
+            if self.block_type == "menu" and self.hovered
+            else self.background_color
+        )
 
     def set_rect(self):
         """Set the rectangle and it's position to draw on the screen."""
@@ -117,31 +115,27 @@ class InputBox:
         self.color = COLOR_INACTIVE
         self.text = text
         self.screen = window
-        self.font = pygame.font.Font(font_path, int(20))
+        self.font = pygame.font.Font(font_path, 20)
         self.txt_surface = self.font.render(text, True, self.color)
         self.active = False
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             # If the user clicked on the input_box rect.
-            if self.rect.collidepoint(event.pos):
-                # Toggle the active variable.
-                self.active = not self.active
-            else:
-                self.active = False
+            self.active = (
+                not self.active if self.rect.collidepoint(event.pos) else False
+            )
             # Change the current color of the input box.
             self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
-        if event.type == pygame.KEYDOWN:
-            if self.active:
-                if event.key == pygame.K_RETURN:
-                    return self.text
-                elif event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                else:
-                    if len(self.text) < 15:
-                        self.text += event.unicode
-                # Re-render the text.
-                self.txt_surface = self.font.render(self.text, True, self.color)
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_RETURN:
+                return self.text
+            elif event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+            elif len(self.text) < 15:
+                self.text += event.unicode
+            # Re-render the text.
+            self.txt_surface = self.font.render(self.text, True, self.color)
 
         return None
 

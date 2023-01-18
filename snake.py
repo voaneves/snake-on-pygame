@@ -206,7 +206,9 @@ class Snake:
         ate_food: boolean
             Flag which represents whether the snake ate or not food.
         """
-        if not self.is_move_invalid(action):
+        if self.is_move_invalid(action):
+            action = self.prev_action
+        else:
             self.prev_action = action
 
         directions = [
@@ -276,9 +278,8 @@ class FoodGenerator:
 
                 if food in body:
                     continue
-                else:
-                    self.pos = food
-                    break
+                self.pos = food
+                break
 
             LOGGER.info("EVENT: FOOD APPEARED")
             self.is_food_on_screen = True
@@ -326,11 +327,7 @@ class Game:
         self.player = player
 
         if player == "ROBOT":
-            if self.relative_pos:
-                self.nb_actions = 3
-            else:
-                self.nb_actions = 5
-
+            self.nb_actions = 3 if self.relative_pos else 5
             self.action_space = self.nb_actions
             self.observation_space = np.empty(shape=(board_size**2,))
 
@@ -393,16 +390,9 @@ class Game:
                         for event in events:
                             if event.type == pygame.MOUSEBUTTONUP:
                                 if leaderboards:
-                                    opt = list_menu[i]
-
-                                    if opt == "MENU":
-                                        return dictionary[opt], None
-                                    else:
-                                        pages = len(opt.rstrip("0123456789"))
-                                        page = int(opt[pages:])
-                                        selected_option = dictionary[opt[:pages]]
-
-                                        return selected_option, page
+                                    return self._extracted_from_cycle_menu_(
+                                        list_menu, i, dictionary
+                                    )
                                 else:
                                     selected_option = dictionary[list_menu[i]]
 
@@ -414,6 +404,18 @@ class Game:
             pygame.display.update()
 
         return selected_option
+
+    # TODO Rename this here and in `cycle_menu`
+    def _extracted_from_cycle_menu_(self, list_menu, i, dictionary):
+        opt = list_menu[i]
+
+        if opt == "MENU":
+            return dictionary[opt], None
+        pages = len(opt.rstrip("0123456789"))
+        page = int(opt[pages:])
+        selected_option = dictionary[opt[:pages]]
+
+        return selected_option, page
 
     def cycle_matches(self, n_matches, mega_hardcore=False):
         """Cycle through matches until the end."""
@@ -445,27 +447,22 @@ class Game:
         logo_rect.center = self.screen_rect.center
 
         options = ["PLAY", "BENCHMARK", "LEADERBOARDS", "QUIT"]
-        blocks = []
-
-        for option in options:
-            blocks.append(
-                TextBlock(
-                    text=f" {option.upper()} ",
-                    pos=(
-                        self.screen_rect.centerx,
-                        (options.index(option) * 2 + 4) * self.screen_rect.centery / 10,
-                    ),
-                    canvas_size=VAR.canvas_size,
-                    font_path=self.font_path,
-                    window=self.window,
-                    scale=(1 / 12),
-                    block_type="menu",
-                )
+        blocks = [
+            TextBlock(
+                text=f" {option.upper()} ",
+                pos=(
+                    self.screen_rect.centerx,
+                    (options.index(option) * 2 + 4) * self.screen_rect.centery / 10,
+                ),
+                canvas_size=VAR.canvas_size,
+                font_path=self.font_path,
+                window=self.window,
+                scale=(1 / 12),
+                block_type="menu",
             )
-
-        selection = self.cycle_menu(blocks, options, OPTIONS, logo, logo_rect)
-
-        return selection
+            for option in options
+        ]
+        return self.cycle_menu(blocks, options, OPTIONS, logo, logo_rect)
 
     def start_match(self, wait):
         """Create some wait time before the actual drawing of the game."""
@@ -499,7 +496,7 @@ class Game:
 
             pygame.display.update()
             pygame.display.set_caption(
-                "snake-on-pygame  |  Game starts in " + count_down + " second(s) ..."
+                f"snake-on-pygame  |  Game starts in {count_down} second(s) ..."
             )
             pygame.time.wait(1000)
 
@@ -555,7 +552,7 @@ class Game:
                 block_type="menu",
             )
 
-        text_score = "SCORE: " + str(int(np.mean(score)))
+        text_score = f"SCORE: {int(np.mean(score))}"
         list_menu = ["PLAY", "MENU", "ADD_TO_LEADERBOARDS", "QUIT"]
         menu_options = [
             TextBlock(
@@ -600,9 +597,7 @@ class Game:
             "snake-on-pygame  |  " + text_score + "  |  GAME OVER..."
         )
         LOGGER.info("EVENT: GAME OVER | FINAL %s", text_score)
-        selected_option = self.cycle_menu(menu_options, list_menu, OPTIONS)
-
-        return selected_option
+        return self.cycle_menu(menu_options, list_menu, OPTIONS)
 
     def select_speed(self):
         """Speed menu, right before calling start_match.
@@ -630,11 +625,7 @@ class Game:
         ]
 
         speed = self.cycle_menu(menu_options, list_menu, SPEEDS)
-        mega_hardcore = False
-
-        if speed == SPEEDS["MEGA_HARDCORE"]:
-            mega_hardcore = True
-
+        mega_hardcore = speed == SPEEDS["MEGA_HARDCORE"]
         return speed, mega_hardcore
 
     def single_player(self, mega_hardcore=False):
@@ -723,9 +714,7 @@ class Game:
         food_pos: tuple of 2 * int
             Current position of the food.
         """
-        food_pos = self.food_generator.generate_food(self.snake.body)
-
-        return food_pos
+        return self.food_generator.generate_food(self.snake.body)
 
     def handle_input(self):
         """After getting current pressed keys, handle important cases.
@@ -800,15 +789,14 @@ class Game:
                 action = ABSOLUTE_ACTIONS["LEFT"]
             else:
                 action = ABSOLUTE_ACTIONS["RIGHT"]
+        elif self.snake.prev_action == ABSOLUTE_ACTIONS["LEFT"]:
+            action = ABSOLUTE_ACTIONS["UP"]
+        elif self.snake.prev_action == ABSOLUTE_ACTIONS["RIGHT"]:
+            action = ABSOLUTE_ACTIONS["DOWN"]
+        elif self.snake.prev_action == ABSOLUTE_ACTIONS["UP"]:
+            action = ABSOLUTE_ACTIONS["RIGHT"]
         else:
-            if self.snake.prev_action == ABSOLUTE_ACTIONS["LEFT"]:
-                action = ABSOLUTE_ACTIONS["UP"]
-            elif self.snake.prev_action == ABSOLUTE_ACTIONS["RIGHT"]:
-                action = ABSOLUTE_ACTIONS["DOWN"]
-            elif self.snake.prev_action == ABSOLUTE_ACTIONS["UP"]:
-                action = ABSOLUTE_ACTIONS["RIGHT"]
-            else:
-                action = ABSOLUTE_ACTIONS["LEFT"]
+            action = ABSOLUTE_ACTIONS["LEFT"]
 
         return action
 
@@ -839,12 +827,10 @@ class Game:
         reward: float
             Current reward of the game.
         """
-        reward = REWARDS["MOVE"]
-
         if self.game_over or self.scored:
-            reward = REWARDS["GAME_OVER"] if self.game_over else self.snake.length
-
-        return reward
+            return REWARDS["GAME_OVER"] if self.game_over else self.snake.length
+        else:
+            return REWARDS["MOVE"]
 
     def draw(self, color_list):
         """Draw the game, the snake and the food using pygame."""
@@ -874,7 +860,7 @@ class Game:
         )
 
         pygame.display.set_caption(
-            "snake-on-pygame  |  Score: " + str(self.snake.length - 3)
+            f"snake-on-pygame  |  Score: {str(self.snake.length - 3)}"
         )
 
     def step(self, action):
@@ -945,11 +931,7 @@ class Game:
         new_score = {"name": str(name), "ranking_data": {"score": score, "step": step}}
 
         if not path.isfile(file_path):
-            data = []
-            data.append(new_score)
-
-            with open(file_path, mode="w") as leaderboards_file:
-                json.dump(data, leaderboards_file, indent=4)
+            data = [new_score]
         else:
             with open(file_path) as leaderboards_file:
                 data = json.load(leaderboards_file)
@@ -957,8 +939,8 @@ class Game:
             data.append(new_score)
             data.sort(key=lambda e: e["ranking_data"]["score"], reverse=True)
 
-            with open(file_path, mode="w") as leaderboards_file:
-                json.dump(data, leaderboards_file, indent=4)
+        with open(file_path, mode="w") as leaderboards_file:
+            json.dump(data, leaderboards_file, indent=4)
 
     def view_leaderboards(self, page=1):
         file_path = self.resource_path("resources/scores.json")
@@ -980,7 +962,6 @@ class Game:
         score_page = []
         score_header = "  POS       NAME                       SCORE         STEP  "
 
-        list_menu = ["LEADERBOARDS"]
         menu_options = [
             TextBlock(
                 text=" LEADERBOARDS ",
@@ -993,7 +974,7 @@ class Game:
             )
         ]
 
-        list_menu.append("HEADER")
+        list_menu = ["LEADERBOARDS", "HEADER"]
         menu_options.append(
             TextBlock(
                 text=score_header,
@@ -1118,14 +1099,10 @@ class Game:
 
             for substep in range(1, substeps):
                 yield tuple(
-                    [
-                        (
-                            start[component]
-                            + (float(substep) / (substeps - 1))
-                            * (finish[component] - start[component])
-                        )
-                        for component in range(components)
-                    ]
+                    start[component]
+                    + (float(substep) / (substeps - 1))
+                    * (finish[component] - start[component])
+                    for component in range(components)
                 )
 
         def pairs(seq):
