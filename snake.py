@@ -100,10 +100,9 @@ REWARDS = {"MOVE": -0.005, "GAME_OVER": -1, "SCORED": 1}
 # Types of point in the board
 POINT_TYPE = {"EMPTY": 0, "FOOD": 1, "BODY": 2, "HEAD": 3, "DANGEROUS": 4}
 
-# Speed levels possible to human players. MEGA HARDCORE starts with MEDIUM and
-# increases with snake size
-LEVELS = [" EASY ", " MEDIUM ", " HARD ", " MEGA HARDCORE "]
-SPEEDS = {"EASY": 80, "MEDIUM": 60, "HARD": 40, "MEGA_HARDCORE": 65}
+# Speed levels possible to human players
+LEVELS = [" EASY ", " MEDIUM ", " HARD "]
+SPEEDS = {"EASY": 80, "MEDIUM": 60, "HARD": 40}
 
 # Set the constant FPS limit for the game. Smoothness depend on this.
 GAME_FPS = 100
@@ -405,7 +404,7 @@ class Game:
 
         return selected_option, page
 
-    def cycle_matches(self, n_matches, mega_hardcore=False):
+    def cycle_matches(self, n_matches):
         """Cycle through matches until the end."""
         score = array("i")
         step = array("i")
@@ -413,7 +412,7 @@ class Game:
         for _ in range(n_matches):
             self.reset()
             self.start_match(wait=3)
-            current_score, current_step = self.single_player(mega_hardcore)
+            current_score, current_step = self.single_player()
             score.append(current_score)
             step.append(current_step)
 
@@ -501,14 +500,12 @@ class Game:
                 pygame.quit()
                 sys.exit()
             elif opt == OPTIONS["PLAY"]:
-                VAR.game_speed, mega_hardcore = self.select_speed()
-                score, _ = self.cycle_matches(n_matches=1, mega_hardcore=mega_hardcore)
+                VAR.game_speed = self.select_speed()
+                score, _ = self.cycle_matches(n_matches=1)
                 opt = self.over(score, None)
             elif opt == OPTIONS["BENCHMARK"]:
-                VAR.game_speed, mega_hardcore = self.select_speed()
-                score, steps = self.cycle_matches(
-                    n_matches=VAR.benchmark, mega_hardcore=mega_hardcore
-                )
+                VAR.game_speed = self.select_speed()
+                score, steps = self.cycle_matches(n_matches=VAR.benchmark)
                 opt = self.over(score, steps)
             elif opt == OPTIONS["LEADERBOARDS"]:
                 while page is not None:
@@ -595,7 +592,7 @@ class Game:
         speed: int
             The selected speed in the main loop.
         """
-        list_menu = ["EASY", "MEDIUM", "HARD", "MEGA_HARDCORE"]
+        list_menu = ["EASY", "MEDIUM", "HARD"]
         menu_options = [
             TextBlock(
                 text=LEVELS[i],
@@ -613,10 +610,10 @@ class Game:
         ]
 
         speed = self.cycle_menu(menu_options, list_menu, SPEEDS)
-        mega_hardcore = speed == SPEEDS["MEGA_HARDCORE"]
-        return speed, mega_hardcore
 
-    def single_player(self, mega_hardcore=False):
+        return speed
+
+    def single_player(self):
         """Play single player game.
 
         Return
@@ -630,9 +627,6 @@ class Game:
 
         while not self.game_over:
             elapsed_time += self.fps.get_time()
-
-            if mega_hardcore:
-                move_wait = VAR.game_speed - (2 * (self.snake.length - 3))
 
             key_input = self.handle_input()
 
