@@ -188,6 +188,12 @@ class Snake:
         ]
         self.prev_action = 1
         self.length = 3
+        self.movement_mapping = {
+            ABSOLUTE_ACTIONS["LEFT"]: (-1, 0),
+            ABSOLUTE_ACTIONS["RIGHT"]: (1, 0),
+            ABSOLUTE_ACTIONS["UP"]: (0, -1),
+            ABSOLUTE_ACTIONS["DOWN"]: (0, 1),
+        }
 
     def is_move_invalid(self, action):
         """Check if the movement is invalid, according to FORBIDDEN_MOVES."""
@@ -211,27 +217,10 @@ class Snake:
         else:
             self.prev_action = action
 
-        directions = [
-            ABSOLUTE_ACTIONS["LEFT"],
-            ABSOLUTE_ACTIONS["RIGHT"],
-            ABSOLUTE_ACTIONS["UP"],
-            ABSOLUTE_ACTIONS["DOWN"],
-        ]
-        if action in directions:
-            self.head[0] += (
-                1
-                if action == ABSOLUTE_ACTIONS["RIGHT"]
-                else -1
-                if action == ABSOLUTE_ACTIONS["LEFT"]
-                else 0
-            )
-            self.head[1] += (
-                1
-                if action == ABSOLUTE_ACTIONS["DOWN"]
-                else -1
-                if action == ABSOLUTE_ACTIONS["UP"]
-                else 0
-            )
+        # Use the dictionary to update the head position
+        movement = self.movement_mapping.get(action, (0, 0))
+        self.head[0] += movement[0]
+        self.head[1] += movement[1]
 
         self.body.insert(0, list(self.head))
         ate_food = self.head == food_pos
@@ -272,14 +261,13 @@ class FoodGenerator:
         if not self.is_food_on_screen:
             while True:
                 food = [
-                    int((VAR.board_size - 1) * random.random()),
-                    int((VAR.board_size - 1) * random.random()),
+                    random.randint(0, VAR.board_size - 1),
+                    random.randint(0, VAR.board_size - 1),
                 ]
 
-                if food in body:
-                    continue
-                self.pos = food
-                break
+                if food not in body:
+                    self.pos = food
+                    break
 
             LOGGER.info("EVENT: FOOD APPEARED")
             self.is_food_on_screen = True
