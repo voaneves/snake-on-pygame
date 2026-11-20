@@ -1,0 +1,185 @@
+{
+  "$schema": "https://raw.githubusercontent.com/voaneves/dtcg-contrast/main/dtcg-contrast.schema.json",
+  "tokens": [
+    "./tokens.json"
+  ],
+  "themes": [
+    {
+      "name": "light"
+    },
+    {
+      "name": "dark",
+      "extensionPath": "vn.dark"
+    }
+  ],
+  "pairs": [
+    {
+      "fg": "button.primary.text",
+      "bg": "button.primary.fill",
+      "level": "AA",
+      "name": "primary button text on fill"
+    },
+    {
+      "fg": "button.primary.signal",
+      "bg": "button.primary.fill",
+      "level": "UI",
+      "name": "primary button signal dot on fill"
+    },
+    {
+      "fg": "button.secondary.text",
+      "bg": "button.secondary.fill",
+      "level": "AA",
+      "name": "secondary button text on fill"
+    },
+    {
+      "fg": "button.command.prompt",
+      "bg": "button.secondary.fill",
+      "level": "AA",
+      "name": "command prompt on fill"
+    },
+    {
+      "fg": "button.secondary.border",
+      "bg": "page",
+      "level": "UI",
+      "name": "secondary button border on page"
+    },
+    {
+      "fg": "button.primary.fill",
+      "bg": "page",
+      "level": "UI",
+      "name": "primary button fill on page"
+    },
+    {
+      "fg": "logo.paper",
+      "bg": "logo.ink",
+      "level": "UI",
+      "name": "logo paper half vs ink half"
+    },
+    {
+      "fg": "logo.signal",
+      "bg": "logo.paper",
+      "level": "UI",
+      "name": "logo signal dot on paper half"
+    },
+    {
+      "fg": "logo.signal",
+      "bg": "logo.ink",
+      "level": "UI",
+      "name": "logo signal dot on ink half"
+    },
+    {
+      "fg": "logo.ring",
+      "bg": "page",
+      "level": "UI",
+      "name": "logo ring on page"
+    },
+    {
+      "fg": "duo.disc",
+      "bg": "page",
+      "level": "UI",
+      "name": "author mark disc on light page",
+      "themes": [
+        "light"
+      ]
+    },
+    {
+      "fg": "duo.ring",
+      "bg": "page",
+      "level": "UI",
+      "name": "author mark ring on dark page",
+      "themes": [
+        "dark"
+      ]
+    },
+    {
+      "fg": "duo.glyph",
+      "bg": "duo.disc",
+      "level": "UI",
+      "name": "author mark V on disc"
+    },
+    {
+      "fg": "duo.signal",
+      "bg": "duo.disc",
+      "level": "UI",
+      "name": "author mark signal dot on disc"
+    },
+    {
+      "fg": "landing.text",
+      "bg": "landing.surface",
+      "level": "AA",
+      "name": "landing text on surface"
+    },
+    {
+      "fg": "landing.text",
+      "bg": "landing.surfaceAlt",
+      "level": "AA",
+      "name": "landing text on alt surface"
+    },
+    {
+      "fg": "landing.muted",
+      "bg": "landing.surface",
+      "level": "AA",
+      "name": "landing muted text on surface"
+    },
+    {
+      "fg": "landing.muted",
+      "bg": "landing.surfaceAlt",
+      "level": "AA",
+      "name": "landing muted text on alt surface"
+    },
+    {
+      "fg": "landing.link",
+      "bg": "landing.surface",
+      "level": "AA",
+      "name": "landing link on surface"
+    },
+    {
+      "fg": "landing.focus",
+      "bg": "landing.surface",
+      "level": "UI",
+      "name": "landing focus ring on surface"
+    },
+    {
+      "fg": "landing.focus",
+      "bg": "landing.surfaceAlt",
+      "level": "UI",
+      "name": "landing focus ring on alt surface"
+    },
+    {
+      "fg": "button.primary.fill",
+      "bg": "landing.surface",
+      "level": "UI",
+      "name": "landing primary button fill on surface"
+    },
+    {
+      "fg": "button.secondary.border",
+      "bg": "landing.surface",
+      "level": "UI",
+      "name": "landing secondary button border on surface"
+    },
+    {
+      "fg": "button.primary.text",
+      "bg": "button.primary.fill",
+      "level": "AA",
+      "name": "landing primary button text on fill"
+    },
+    {
+      "fg": "button.secondary.text",
+      "bg": "button.secondary.fill",
+      "level": "AA",
+      "name": "landing secondary button text on fill"
+    },
+    {
+      "fg": "button.command.prompt",
+      "bg": "button.secondary.fill",
+      "level": "AA",
+      "name": "landing command prompt on fill"
+    },
+    {
+      "fg": "logo.ring",
+      "bg": "landing.surface",
+      "level": "UI",
+      "name": "landing logo ring on surface"
+    }
+  ]
+}

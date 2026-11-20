@@ -1,0 +1,60 @@
+{
+  "repo": "snake-on-pygame",
+  "branch": "master",
+  "lang": "en",
+  "license": "MIT",
+  "name": "Snake on Pygame",
+  "tagline": "Classic Snake in Python and Pygame, playable by a person or controlled by a DQN agent.",
+  "description": "Snake game in Python and Pygame that humans can play and AI agents can control through a gym-style API.",
+  "logo": {
+    "existing": "resources/images/snake_logo.png",
+    "width": 300,
+    "height": 100
+  },
+  "buttons": [
+    {
+      "id": "landing",
+      "text": "View landing page",
+      "kind": "primary",
+      "font": "sans",
+      "href": "https://voaneves.github.io/snake-on-pygame/",
+      "landing": false
+    },
+    {
+      "id": "play",
+      "text": "Get the game",
+      "kind": "secondary",
+      "font": "sans",
+      "href": "https://github.com/voaneves/snake-on-pygame/archive/refs/heads/master.zip",
+      "landing_kind": "primary"
+    },
+    {
+      "id": "hire",
+      "text": "Let's talk",
+      "kind": "primary",
+      "font": "sans",
+      "href": "https://voaneves.com/en/#contact",
+      "landing": false
+    },
+    {
+      "id": "site",
+      "text": "voaneves.com",
+      "kind": "secondary",
+      "font": "sans",
+      "href": "https://voaneves.com/en/",
+      "landing": false
+    }
+  ],
+  "features": [
+    "Playable by humans, with single games and a benchmark mode.",
+    "Gym-style API (reset, state, step, render) for AI agents.",
+    "Benchmark mode records your mean score and steps over 10 games."
+  ],
+  "landing": true,
+  "live_url": "https://voaneves.github.io/snake-on-pygame/",
+  "hire_href": "https://voaneves.com/en/#contact",
+  "image": {
+    "src": "https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/resources/gifs/gameplay.gif",
+    "alt": "Gameplay of Snake on Pygame"
+  }
+}

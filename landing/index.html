@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snake on Pygame - Classic Snake in Python and Pygame, playable by a person or controlled by a DQN agent.</title>
+<meta name="description" content="Snake game in Python and Pygame that humans can play and AI agents can control through a gym-style API.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4ead4">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#121110">
+<link rel="canonical" href="https://voaneves.github.io/snake-on-pygame/">
+<link rel="icon" href="logo.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Snake on Pygame - Classic Snake in Python and Pygame, playable by a person or controlled by a DQN agent.">
+<meta property="og:description" content="Snake game in Python and Pygame that humans can play and AI agents can control through a gym-style API.">
+<meta property="og:url" content="https://voaneves.github.io/snake-on-pygame/">
+<meta property="og:image" content="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/resources/gifs/gameplay.gif">
+<meta property="og:image:alt" content="Gameplay of Snake on Pygame">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{
+  --surface:#f4ead4;
+  --surface-alt:#e8dec5;
+  --text:#0a0a0a;
+  --muted:#4a4437;
+  --link:#b80000;
+  --focus:#b80000;
+  --btn-primary-fill:#0a0a0a;
+  --btn-primary-text:#f4ead4;
+  --btn-primary-signal:#ff3838;
+  --btn-secondary-fill:#f4ead4;
+  --btn-secondary-text:#0a0a0a;
+  --btn-secondary-border:#0a0a0a;
+  --btn-command-prompt:#b80000;
+  --logo-ink:#0a0a0a;
+  --logo-paper:#f4ead4;
+  --logo-ring:#0a0a0a;
+  --logo-signal:#d70000;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+  --surface:#121110;
+    --surface-alt:#1c1a17;
+    --text:#f4ead4;
+    --muted:#b8ae98;
+    --link:#ff5a5a;
+    --focus:#ff5a5a;
+    --btn-primary-fill:#e8dec5;
+    --btn-primary-text:#0a0a0a;
+    --btn-primary-signal:#b80000;
+    --btn-secondary-fill:#1c1a17;
+    --btn-secondary-text:#e8dec5;
+    --btn-secondary-border:#8a816f;
+    --btn-command-prompt:#ff5a5a;
+    --logo-ink:#0a0a0a;
+    --logo-paper:#f4ead4;
+    --logo-ring:#e8dec5;
+    --logo-signal:#d70000;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--surface);color:var(--text);font:1.0625rem/1.6 var(--sans)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.skip{position:absolute;left:1rem;top:-4rem;padding:.75rem 1rem;background:var(--btn-primary-fill);color:var(--btn-primary-text);border-radius:4px;font-weight:600;z-index:10}
+.skip:focus{top:1rem}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{width:100%;max-width:60rem;margin:0 auto;padding:0 1rem}
+.hero{padding:4rem 0 3rem;text-align:center}
+.logo{display:block;margin:0 auto 1.5rem;width:7rem;height:7rem}
+.logo-img{display:block;margin:0 auto 1.5rem;max-width:100%;height:auto}
+h1{margin:0;font-size:clamp(2rem,6vw,3.25rem);line-height:1.1;letter-spacing:-.02em}
+.tagline{margin:1rem auto 0;max-width:34rem;font-size:clamp(1.15rem,3.2vw,1.45rem);font-weight:700;line-height:1.35}
+.lead{margin:1rem auto 0;max-width:36rem;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center;margin:2rem 0 0;padding:0;list-style:none}
+.btn{display:inline-flex;align-items:center;gap:.6rem;min-height:3rem;padding:0 1.25rem;border:1.5px solid transparent;border-radius:4px;font-weight:600;font-size:1rem;line-height:1;text-decoration:none;max-width:100%}
+.btn-primary{background:var(--btn-primary-fill);color:var(--btn-primary-text)}
+.btn-secondary{background:var(--btn-secondary-fill);color:var(--btn-secondary-text);border-color:var(--btn-secondary-border)}
+.btn-command{font-family:var(--mono);font-weight:500;font-size:.9375rem}
+.dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--btn-primary-signal);flex:none}
+.prompt{color:var(--btn-command-prompt)}
+@media (prefers-reduced-motion:no-preference){.btn{transition:transform .15s ease}.btn:hover{transform:translateY(-1px)}}
+section{padding:2.5rem 0}
+h2{margin:0 0 1.25rem;font-size:1.5rem;line-height:1.25;letter-spacing:-.01em}
+.features{display:grid;gap:1rem;margin:0;padding:0;list-style:none;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.features li{padding:1.25rem;border-radius:8px;background:var(--surface-alt)}
+.features h3{margin:0 0 .35rem;font-size:1.0625rem}
+.features p{margin:0}
+.shot{margin:0}
+.shot img{display:block;width:100%;height:auto;border-radius:8px;background:var(--surface-alt)}
+.contact{text-align:center}
+.contact p{margin:0 auto 1.25rem;max-width:34rem;color:var(--muted)}
+a{color:var(--link);text-underline-offset:.2em}
+a.btn{text-decoration:none}
+footer{padding:2rem 0 3rem;color:var(--muted);font-size:.9375rem;text-align:center}
+footer p{margin:0}
+@media (max-width:30rem){.hero{padding-top:2.5rem}.btn{width:100%;justify-content:center}.actions{flex-direction:column;align-items:stretch}.actions li{display:flex}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<main id="main">
+  <div class="wrap">
+    <section class="hero" aria-labelledby="name">
+      <img class="logo-img" src="logo.png" alt="" width="300" height="100">
+      <h1 id="name">Snake on Pygame</h1>
+      <p class="tagline">Classic Snake in Python and Pygame, playable by a person or controlled by a DQN agent.</p>
+      <p class="lead">Snake game in Python and Pygame that humans can play and AI agents can control through a gym-style API.</p>
+      <ul class="actions">
+        <li><a class="btn btn-primary" href="https://github.com/voaneves/snake-on-pygame/archive/refs/heads/master.zip"><span class="dot" aria-hidden="true"></span><span>Get the game</span><span aria-hidden="true">&rarr;</span></a></li>
+      </ul>
+    </section>
+    <section aria-labelledby="features-title">
+      <h2 id="features-title">Highlights</h2>
+      <ul class="features">
+        <li><p>Playable by humans, with single games and a benchmark mode.</p></li>
+        <li><p>Gym-style API (reset, state, step, render) for AI agents.</p></li>
+        <li><p>Benchmark mode records your mean score and steps over 10 games.</p></li>
+      </ul>
+    </section>
+    <section aria-label="Preview">
+      <figure class="shot"><img src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/resources/gifs/gameplay.gif" alt="Gameplay of Snake on Pygame" loading="lazy" decoding="async"></figure>
+    </section>
+    <section class="contact" aria-labelledby="hire-title">
+      <h2 id="hire-title">Need something like this?</h2>
+      <p>I build and ship projects like this for teams. Tell me what you need.</p>
+      <a class="btn btn-primary" href="https://voaneves.com/en/#contact"><span class="dot" aria-hidden="true"></span><span>Let&#x27;s talk</span><span aria-hidden="true">&rarr;</span></a>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Licensed under the MIT license. <a href="https://github.com/voaneves/snake-on-pygame">GitHub</a></p>
+  </div>
+</footer>
+</body>
+</html>

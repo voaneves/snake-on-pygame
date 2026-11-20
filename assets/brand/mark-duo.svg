@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="VOANEVES mark">
+  <circle cx="256" cy="256" r="252" fill="#0a0a0a" stroke="#e8dec5" stroke-width="8"/>
+  <path fill="#f4ead4" d="M142 148L214 148L250 244L286 148L358 148L277 364L223 364Z"/>
+  <circle cx="340" cy="337" r="27" fill="#f50000"/>
+</svg>

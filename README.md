@@ -1,115 +1,92 @@
-snake-on-pygame
-=================
+<a id="top"></a>
 
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/Neves4/snake-rl/graphs/commit-activity) [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/Neves4/ama)
+<div align="center">
 
-<p align="center">
-    <img src = "resources/images/snake_logo.png"/>
+<img alt="Snake on Pygame logo: the word SNAKE, the tag HUMAN VS AI and a green snake icon" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/resources/images/snake_logo.png" width="300" height="100" />
+
+<h1>Snake on Pygame</h1>
+
+<p>
+  <strong>Classic Snake in Python and Pygame, playable by a person or controlled by a DQN agent.</strong><br />
+  <sub>Human vs AI: play it yourself or plug in your own agent</sub>
 </p>
 
-Snake game that can be controlled by human input and AI agents (DQN). Who's best? :snake: :robot:
+<p>
+  <a href="https://voaneves.github.io/snake-on-pygame/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/buttons/landing-dark.svg" /><img alt="View landing page" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/buttons/landing-light.svg" height="40" /></picture></a>
+  <a href="https://github.com/voaneves/snake-on-pygame/archive/refs/heads/master.zip"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/buttons/play-dark.svg" /><img alt="Get the game" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/buttons/play-light.svg" height="40" /></picture></a>
+</p>
 
-Table of Contents
-=================
+<p><sub>Need something like this? <a href="https://voaneves.com/en/#contact"><strong>Let's talk →</strong></a></sub></p>
 
-* [1. Getting Started (for human players)](#getting_started-human)
-    * [1.1. Prerequisites](#pre-req-human)
-    * [1.2. Installing](#installing-human)
-    * [1.3. Playing](#playing-human)
-* [2. Getting Started (using AI agents)](#getting_started-ai)
-    * [2.1. Available methods to integrate with any agent](#available-method)
-        * [2.1.1. Methods](#methods)
-        * [2.1.2. Example usage](#example-usage)
-    * [2.2. Using colab-rl](#using-colab-rl)
-* [3. Contributing](#contributing)
-* [4. License](#license)
-* [5. Acknowledgments](#acknowledgments)
+<p>
+  <a href="https://github.com/voaneves/snake-on-pygame/blob/master/LICENSE"><img src="https://img.shields.io/github/license/voaneves/snake-on-pygame?style=flat-square&color=0A0A0A" alt="MIT License" /></a>
+  <img src="https://img.shields.io/badge/Python-pygame-1f425f?style=flat-square" alt="Python and Pygame" />
+  <a href="https://github.com/voaneves/snake-on-pygame/issues"><img src="https://img.shields.io/github/issues/voaneves/snake-on-pygame?style=flat-square&color=0A0A0A" alt="Open issues" /></a>
+</p>
 
-## 1. Getting Started (for human players) <a name="getting-started-human"></a>
+<p>
+  <a href="#playing">Play</a> ·
+  <a href="#ai-agents">AI agents</a> ·
+  <a href="#contributing">Contributing</a> ·
+  <a href="#acknowledgments">Acknowledgments</a> ·
+  <a href="#contact">Contact</a>
+</p>
 
-Let's get the game up and running on your computer, with the instructions below.
-You can play the game and compare to the repos benchmark, which includes AI and
-humans (you can include yourself by a pull request to the file [scores.json](resources/scores.json)).
+</div>
 
-### 1.1. Prerequisites <a name="pre-req-human"></a>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/brand/rule-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/brand/rule-light.svg" />
+  <img alt="" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/brand/rule-light.svg" width="100%" />
+</picture>
 
-To play the game you need Python 3.4+. If you installed [Anaconda](https://www.anaconda.com/) the only package
-you need to download is pygame. Before installing it, make sure your Anaconda
-installation is up-to-date using the command (conda update conda anaconda)and
-updating all packages (conda update --all). To install pygame, use:
+## Playing
+
+Download the game, run one command and play Snake against the benchmark, which holds scores from AI agents and humans.
+
+<p align="center">
+  <img alt="Gameplay of a single-player Snake match" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/resources/gifs/gameplay.gif" width="100%" />
+</p>
+
+### Prerequisites
+
+You need Python 3.4+ with `pygame`, `numpy` and `pandas`. With [Anaconda](https://www.anaconda.com/), update it first (`conda update conda anaconda`, then `conda update --all`) and install pygame:
 
 ```
 $ conda install -c cogsci pygame
-
-```
-It's highly recommended to use Anaconda to manage your Python packages and environments.
-If you chose not to, make sure you run requirements_human.txt, using:
-
-```
-$ python install setup.py
 ```
 
-or
+Without Anaconda, use pip:
 
 ```
-$ python3 install setup.py
+$ pip install pygame numpy pandas
 ```
 
-### 1.2. Installing <a name="installing-human"></a>
+### Installing
 
-You can download download the source code or clone the repository to your computer.
-
-To clone the repository, open bash or command prompt, cd to the chosen directory
-and run the following code:
+Clone the repository, or download the ZIP (click **Code**, then **Download ZIP**):
 
 ```
-$ git clone https://github.com/Neves4/SnakeAI.git
+$ git clone https://github.com/voaneves/snake-on-pygame.git
 ```
 
-To download the repo, just follow along the gif (click 'Clone or Download' and
-then 'Download ZIP').
+### Running
 
-![Download repo](/resources/gifs/download_repo.gif)
-
-### 1.3. Playing <a name="playing-human"></a>
-
-The GUI allows you to choose between single games and the benchmark mode. It's
-also possible to choose between difficulty levels.
-
-If using the repository files, change directory to the root, then to the game folder
-and use:
+The game window lets you choose between single games and the benchmark mode, and between difficulty levels. From the repository root, run:
 
 ```
 $ python snake.py [-h]
 ```
 
-An example gameplay for a single player match is shown below.
+In benchmark mode you play 10 games, and your mean score and steps are recorded. To join the leaderboard, open a pull request that changes [`resources/scores.json`](resources/scores.json) or open an issue with your score.
 
-<p align="center">
-    <img src = "/resources/gifs/gameplay.gif"/>
-</p>
+## AI agents
 
-In the benchmark mode, you will play through 10 games and your mean score/steps
-are going to be recorded and you can add to the leaderboards. Pull request
-changing the benchmark file ([located in here](resources/scores.json)) or open an issue with your score.
+The game follows a [gym](https://github.com/openai/gym)-style API, so you can plug in any agent written in PyTorch, TensorFlow, Theano or Keras. To skip writing the agent, use [colab-rl](https://github.com/voaneves/colab-rl): it already implements agents and wires them to this game.
 
-## 2. Getting Started (using AI agents) <a name="getting-started-ai"></a>
+### Methods and useful properties
 
-This game uses similar usage structure and methods to [OpenAI's gym](https://github.com/openai/gym) and you
-can easily integrate it with any agent, written in Pytorch, Tensorflow, Theano or Keras.
-
-It's recommended that you use [colab-rl](https://github.com/Neves4/colab-rl), a repository that integrates
-state-of-the-art algorithms with games, because it already implements the agents
-and the game, making the process of quick prototyping much easier.
-
-### 2.1. Available methods to integrate with any agent <a name="available-methods"></a>
-
-In this section, we're going to show the useful methods and properties and also
-demonstrate how to use in a real case
-
-#### 2.1.1. Methods and useful properties <a name="methods"></a>
-
-Below are listed some useful properties of the game class.
+Useful properties of the game class:
 
 ```
 >>> print(game.nb_actions)
@@ -125,11 +102,11 @@ Below are listed some useful properties of the game class.
 4 # current length of the snake in a given episode.
 ```
 
-The methods you could use to integrate with any AI agent are:
+Methods to integrate with an agent:
 
 ```
 >>> state = game.reset()
-  # Reset the game and returns the game state right after resetting.
+  # Reset the game and return the state right after resetting.
 
 >>> state = game.state()
   # Get the current game state.
@@ -138,74 +115,78 @@ The methods you could use to integrate with any AI agent are:
   # Update the food position.
 
 >>> state, reward, done, info = game.step(numerical_action)
-  # Play a numerical_action, obtaining state, reward, over and info.
+  # Play a numerical_action: get state, reward, over and info.
 
 >>> game.render()
   # Render the game in a pygame window.
 ```
 
-#### 2.1.2. Example usage <a name="example-usage"></a>
+### Example usage
 
-To use with AI agents, you need to integrate the game with the AI agent. An
-example usage is:
+One episode with your own agent:
 
 ```
 from snake-on-pygame import Game
-from ai_agent import your_model # import your AI agent of choice
+from ai_agent import your_model  # your AI agent of choice
 
-game = Game(player = "ROBOT",
-                board_size = board_size,
-                local_state = local_state,
-                relative_pos = RELATIVE_POS)
+game = Game(player="ROBOT",
+            board_size=board_size,
+            local_state=local_state,
+            relative_pos=RELATIVE_POS)
 state = game.reset()
 
 model = your_model()
 
-while not game.game_over:  # Main loop, until game_over
+while not game.game_over:  # main loop, until game_over
     game.food_pos = game.generate_food()
 
-    model.choose_action(state)   # CHOOSE ACTION BASED ON MODEL/AI AGENT
+    model.choose_action(state)  # choose action based on the model
     state, reward, done, info = game.step(action)
 
-    mode.train(state, reward, game_over, done)
+    model.train(state, reward, game_over, done)
     print(info)
 
 model.test()
 ```
 
-The above code is an example usage for one episode. If you want more episodes,
-wrap the while loop in a loop for nb_epochs (you choose).
+For more episodes, wrap the `while` loop in a loop over your number of epochs.
 
-### 2.2. Using with colab-rl <a name="using-colab-rl"></a>
+### Using colab-rl
 
-Using snake-on-pygame with [colab-rl (click here)](https://github.com/Neves4/colab-rl) is very straightforward
-and you can also experiment with hyperparameters on state-of-the-art algorithms.
-
-A detailed usage is described on the repo's main README, but for short, after
-cloning it you can just execute the run_dqn.py script with:
+[colab-rl](https://github.com/voaneves/colab-rl) lets you experiment with hyperparameters on state-of-the-art algorithms. Its main README has the detailed usage; in short, after cloning it, run:
 
 ```
 $ python run_dqn.py [-h]
 ```
 
-And you can read more about all the possible arguments in the file/repo. An
-trained DQN model, on a 10 x 10 board with no customization is represented on the
-below GIF.
+Read the file or the repository for all the arguments. A DQN model trained on a 10 x 10 board with no customization looks like this:
 
 <p align="center">
-    <img src = "/resources/gifs/dqn_gameplay.gif"/>
+  <img alt="A trained DQN agent playing Snake on a 10 by 10 board" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/resources/gifs/dqn_gameplay.gif" width="100%" />
 </p>
 
-## 3. Contributing <a name="contributing"></a>
+## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on this repo's code of conduct, and the process for submitting pull requests.
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on the code of conduct and the process for submitting pull requests.
 
-## 4. License <a name="license"></a>
+## Acknowledgments
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- [@farizrahman4u](https://github.com/farizrahman4u): the [qlearning4k](https://github.com/farizrahman4u/qlearning4k) Snake code was the base of this repository's code.
+- [@chuyangliu](https://github.com/chuyangliu): also for his Snake code, which implemented the relative actions.
 
-## 5. Acknowledgments <a name="acknowledgments"></a>
+## Contact
 
-* @farizrahman4u - For his [qlearning4k](https://github.com/farizrahman4u/qlearning4k) snake code, I used it as the base of this repo's code.
+<p>
+  <a href="https://voaneves.com/en/#contact"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/buttons/hire-dark.svg" /><img alt="Let's talk" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/buttons/hire-light.svg" height="40" /></picture></a>
+  <a href="https://voaneves.com/en/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/buttons/site-dark.svg" /><img alt="voaneves.com" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/buttons/site-light.svg" height="40" /></picture></a>
+</p>
 
-* @chuyangliu - Also for his snake code, which implemented the relative actions.
+<a href="https://linkedin.com/in/voaneves">LinkedIn</a> · <a href="mailto:victorneves478@gmail.com">E-mail</a>
+
+<p align="center">
+  <img alt="VOANEVES mark" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/brand/mark-duo.svg" width="32" height="32" />
+</p>
+
+<p align="center"><sub>Released under the <a href="https://github.com/voaneves/snake-on-pygame/blob/master/LICENSE">MIT License</a>.</sub></p>
+
+<p align="center"><sub><a href="#top">↑ Back to top</a></sub></p>
