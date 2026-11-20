@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Snake on Pygame logo">
+  <path fill="#0a0a0a" d="M256 8a248 248 0 0 0 0 496Z"/>
+  <path fill="#f4ead4" d="M256 8a248 248 0 0 1 0 496Z"/>
+  <circle cx="256" cy="256" r="248" fill="none" stroke="#e8dec5" stroke-width="16"/>
+  <defs>
+    <clipPath id="vn-l"><rect x="0" y="0" width="256" height="512"/></clipPath>
+    <clipPath id="vn-r"><rect x="256" y="0" width="256" height="512"/></clipPath>
+  </defs>
+  <g clip-path="url(#vn-l)">
+    <path fill="none" stroke="#f4ead4" stroke-opacity="0.24" stroke-width="4" stroke-linecap="round" d="M112 112V400 M184 112V400 M256 112V400 M328 112V400 M400 112V400 M112 112H400 M112 184H400 M112 256H400 M112 328H400 M112 400H400"/>
+    <path fill="none" stroke="#f4ead4" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" d="M140 356h16v16h-16Z M208 352h24v24h-24Z M208 280h24v24h-24Z M280 280h24v24h-24Z M352 280h24v24h-24Z M352 208h24v24h-24Z"/>
+  </g>
+  <g clip-path="url(#vn-r)">
+    <path fill="none" stroke="#0a0a0a" stroke-opacity="0.24" stroke-width="4" stroke-linecap="round" d="M112 112V400 M184 112V400 M256 112V400 M328 112V400 M400 112V400 M112 112H400 M112 184H400 M112 256H400 M112 328H400 M112 400H400"/>
+    <path fill="none" stroke="#0a0a0a" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" d="M140 356h16v16h-16Z M208 352h24v24h-24Z M208 280h24v24h-24Z M280 280h24v24h-24Z M352 280h24v24h-24Z M352 208h24v24h-24Z"/>
+  </g>
+  <circle cx="364" cy="148" r="24" fill="#d70000"/>
+</svg>

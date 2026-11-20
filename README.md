@@ -2,7 +2,11 @@
 
 <div align="center">
 
-<img alt="Snake on Pygame logo: the word SNAKE, the tag HUMAN VS AI and a green snake icon" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/resources/images/snake_logo.png" width="300" height="100" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/logo/logo-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/logo/logo-light.svg" />
+  <img alt="Snake on Pygame logo: a pixel-block snake on a grid, with a red dot for the apple" src="https://raw.githubusercontent.com/voaneves/snake-on-pygame/master/assets/logo/logo-light.svg" width="112" height="112" />
+</picture>
 
 <h1>Snake on Pygame</h1>
 
